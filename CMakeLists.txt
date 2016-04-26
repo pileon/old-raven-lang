@@ -10,6 +10,9 @@ endif()
 
 add_compile_options(${WARNING_OPTIONS} -std=c++14 -pipe)
 
+find_package(Boost
+        REQUIRED COMPONENTS program_options system)
+
 set(SOURCE_FILES main.cpp)
 add_executable(raven_lang ${SOURCE_FILES})
 
