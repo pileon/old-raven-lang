@@ -99,7 +99,8 @@ This file contains the formal grammar for the language.
         ;
         
     block_stmt
-        : '{' statement_list '}'
+        : '{' /* empty */ '}'
+        | '{' statement_list '}'
         ;
         
     switch_stmt
@@ -243,8 +244,8 @@ This file contains the formal grammar for the language.
         ;
         
     function
-        : FUNCTION opt_arguments '{' /* empty */ '}'
-        | FUNCTION opt_arguments '{' statement_list '}'
+        : FUNCTION opt_arguments statement
+        | FUNCTION opt_arguments expression
         ;
         
     opt_arguments
