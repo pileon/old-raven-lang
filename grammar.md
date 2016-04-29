@@ -154,8 +154,8 @@ This file contains the formal grammar for the language.
         ;
         
     comparison_expr
-        : add_sub_expr
-        | add_sub_expr comparision_op add_sub_expr
+        : range_expr
+        | range_expr comparision_op add_sub_expr
         ;
         
     comparison_op
@@ -167,6 +167,11 @@ This file contains the formal grammar for the language.
         | '>'
         | "~="
         | "!~="
+        ;
+        
+    range_expr
+        : add_sub_expr
+        | add_sub_expr "..." add_sub_expr
         ;
         
     add_sub_expr
@@ -216,7 +221,7 @@ This file contains the formal grammar for the language.
         : suffix_expr
         | suffix_expr '.' selection_expr
         ;
-        
+                
     suffix_expr
         : primary_expr
         | suffix_expr '(' /* empty */ ')'
