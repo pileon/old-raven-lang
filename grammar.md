@@ -243,5 +243,63 @@ This file contains the formal grammar for the language.
         ;
         
     function
-        : FUNCTION opt_arguments '{' statement_list '}'
+        : FUNCTION opt_arguments '{' /* empty */ '}'
+        | FUNCTION opt_arguments '{' statement_list '}'
+        ;
+        
+    opt_arguments
+        : /* empty */
+        | '(' /* empty */ ')'
+        | '(' argument_list ')'
+        ;
+        
+    argument_list
+        : argument
+        | argument ',' argument_list
+        ;
+        
+    argument
+        : IDENT
+        | CONST IDENT
+        ;
+        
+    class
+        : property_visibility CLASS opt_inheritance '{' /* empty */ '}'
+        | property_visibility CLASS opt_inheritance '{' property_list '}'
+        ;
+        
+    opt_inheritance
+        : /* empty */
+        | '(' /* empty */ ')'
+        | '(' inheritance_list ')'
+        ;
+        
+    inheritance_list
+        : inheritance
+        | inheritance ',' inheritance_list
+        ;
+        
+    inheritance
+        : IDENT
+        | IDENT '.' inheritance
+        ;
+        
+    property_list
+        : property opt_separator
+        | property separator property_list
+        ;
+        
+    property
+        : property_visibility declaration_stmt
+        ;
+        
+    property_visibility
+        : /* nothing */
+        | PRIVATE
+        | PUBLIC
+        ;
+        
+    class
+        : property_visibility OBJECT opt_inheritance '{' /* empty */ '}'
+        | property_visibility OBJECT opt_inheritance '{' property_list '}'
         ;
