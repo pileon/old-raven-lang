@@ -165,8 +165,8 @@ This file contains the formal grammar for the language.
         | ">="
         | '<'
         | '>'
-        | "~="
-        | "!~="
+        | "~="      /* aproximately equal to, usefull for case-insesitive comparisons, or floating point comparisons */
+        | "!~="     /* aproximately not equal to */
         ;
         
     range_expr
@@ -183,7 +183,7 @@ This file contains the formal grammar for the language.
     mul_div_expr
         : bitwise_or_expr
         | bitwise_or_expr '*' mul_div_expr
-        | bitwise_or_expr "**" mul_div_expr
+        | bitwise_or_expr "**" mul_div_expr     /* exponentiation */
         | bitwise_or_expr '/' mul_div_expr
         | bitwise_or_expr '%' mul_div_expr
         ;
