@@ -8,6 +8,7 @@ A generic script language, but made primarily for use in the Raven MUD server.
 * Everything is first-class
 * Dynamic typing
 * Syntax similar to C and C++
+* Extendable, possible to add syntactic structures
 
 ## Examples
 
@@ -18,7 +19,7 @@ A generic script language, but made primarily for use in the Raven MUD server.
 ### Fibonacci series, recursive
 
     # Recursively calculate a Fibonacci number
-    fib = function(n)
+    var fib = function(n)
     {
         if (n == 0 || n == 1)
             return n;
