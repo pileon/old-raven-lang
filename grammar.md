@@ -7,14 +7,29 @@ This file contains the formal grammar for the language.
         ;
         
     statement_list
-        : statement
-        | statement statement_list
+        : statement opt_separator
+        | statement separator statement_list
+        ;
+        
+    opt_separator
+        : /* empty */
+        | separator
+        ;
+        
+    separator
+        : NEWLINE
+        | ';'
         ;
         
     statement:
         : declaration_stmt
         | assignment_stmt
         | return_stmt
+        | if_stmt
+        | loop_stmt
+        | jump_stmt
+        | block_stmt
+        | switch_stmt
         ;
     
     declaration_stmt
@@ -24,12 +39,89 @@ This file contains the formal grammar for the language.
         ;
         
     assignment_stmt
-        : expression '=' expression
+        : selection_expr assignment_op expression
         ;
         
+    assignment_op
+        : '='
+        | "+="
+        | "-="
+        | "*="
+        | "/="
+        | "%="
+        | "|="
+        | "&="
+        | "^="
+        | "<<="
+        | ">>="
+        ;
+
     return_stmt
         : RETURN
         | RETURN expression
+        ;
+        
+    if_stmt
+        : IF '(' logical_or_expr ')' statement
+        | IF '(' logical_or_expr ')' statement ELSE statement
+        ;
+        
+    loop_expr
+        : WHILE '(' expression_list ')' statement
+        | DO statement WHILE '(' expression_list ')'
+        | for_stmt
+        ;
+        
+    for_stmp
+        : FOR '(' for_init_expr ';' logical_or_expr ';' for_incr_expr ')' statement
+        | FOR '(' range_for_init_expr ':' expression ')' statement
+        ;
+        
+    for_init_expr
+        : selection_expr '=' expression
+        | VAR IDENT '=' expression
+        ;
+        
+    for_incr_expr
+        : expression
+        | selection_expr assignment_op expression
+        ;
+        
+    range_for_init_expr
+        : selection_expr
+        | VAR IDENT
+        | CONST IDENT
+        ;
+        
+    jump_stmt
+        : BREAK
+        | CONTINUE
+        ;
+        
+    block_stmt
+        : '{' statement_list '}'
+        ;
+        
+    switch_stmt
+        : SWITCH '(' expression ')' '{' switch_body '}'
+        ;
+        
+    switch_body
+        : switch_case
+        | switch_case separator switch_body
+        ;
+        
+    switch_case
+        : cases statement_list
+        ;
+        
+    cases:
+        : single_case
+        | single_case cases
+        ;
+        
+    single_case
+        : CASE expression ':'
         ;
         
     expression_list
@@ -43,7 +135,7 @@ This file contains the formal grammar for the language.
         
     conditional_expr
         : logical_or_expr
-        | IF '(' expression ')' expression ELSE expression
+        | IF '(' logical_or_expr ')' expression ELSE expression
         ;
         
     logical_or_expr
