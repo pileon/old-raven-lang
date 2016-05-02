@@ -70,3 +70,12 @@ A generic script language, but made primarily for use in the Raven MUD server.
     
     for (var a : [fluffy, spot])
         a.speak()
+
+## Questions that might be frequently asked some time in the future
+
+**Q.** What is the difference between a class and an object?
+**A.** A class is like a *blueprint* for an object. An object is an
+actual implementation of the blueprint.
+
+A class can not be used as an object, and an object can't be used as
+a class.

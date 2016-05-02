@@ -292,6 +292,7 @@ This file contains the formal grammar for the language.
         
     property
         : property_visibility declaration_stmt
+        | property_visibility assignment_stmt
         ;
         
     property_visibility
