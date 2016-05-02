@@ -30,3 +30,43 @@ A generic script language, but made primarily for use in the Raven MUD server.
     # Print the first ten Fibonacci numbers
     for (i : 1..10)
         print("Fibbonacci for %{i} is %{fib(i)}\n");
+
+### Classes and inheritance
+
+    var animal = class
+    {
+        var name
+        var speak = function()
+        {
+            print("%{name} says "%{make_sound()}.\n")
+        }
+    }
+    
+    var cat = class(animal)
+    {
+        var make_sound = function()
+        {
+            return "meow"
+        }
+    }
+    
+    var dog = class(animal)
+    {
+        var make_sound = function()
+        {
+            return "woof"
+        }
+    }
+    
+    var spot = object(dog)
+    {
+        name = "Spot"
+    }
+    
+    var fluffy = object(cat)
+    {
+        name = "Fluffy"
+    }
+    
+    for (var a : [fluffy, spot])
+        a.speak()
