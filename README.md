@@ -16,7 +16,7 @@ A generic script language, but made primarily for use in the Raven MUD server.
 
     print("Hello world\n")
 
-### Fibonacci series, recursive
+### <a name="fibonacci"></a>Fibonacci series, recursive
 
     # Recursively calculate a Fibonacci number
     var fib = function(n)
@@ -78,4 +78,17 @@ A generic script language, but made primarily for use in the Raven MUD server.
 actual implementation of the blueprint.
 
 A class can not be used as an object, and an object can't be used as
-a class.
+a class. That means you can not use a class in expressions, and you
+can't inherit from an object.
+
+**Q.** Does an anonymous function capture its scope?
+**A.** Yes, if you have an anonymous function as part of an expression
+it will capture its surrounding scope.
+
+Example:
+
+    var foo = 5
+    function(){ print("i = %{i}\n") }()
+
+When declaring a named function (like `fib` in the [Fibonacci](#fibonacci) example
+above) the scope is not captured.
