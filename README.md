@@ -31,6 +31,9 @@ A generic script language, but made primarily for use in the Raven MUD server.
     for (i : 1..10)
         print("Fibbonacci for %{i} is %{fib(i)}\n");
 
+The above example also demonstrates the possibility to have arbitrary
+expression in literal string constants.
+
 ### Classes and inheritance
 
     var animal = class

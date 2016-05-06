@@ -2,6 +2,8 @@
 
 This file contains the formal grammar for the language.
 
+## Grammar
+
     program
         : statement_list
         ;
@@ -305,3 +307,44 @@ This file contains the formal grammar for the language.
         : property_visibility OBJECT opt_inheritance '{' /* empty */ '}'
         | property_visibility OBJECT opt_inheritance '{' property_list '}'
         ;
+
+## Constant string literals
+
+Constant string literals are enclosed in double quotes (`"`).
+ 
+Constant string literals might contain embedded expressions. They start
+with a percentage (`%`) and the expression is enclosed in curly-braces
+(`{}`). Embedded expressions are evaluated lazily, when the constant
+string literal is used and not at the time of compilation. Expressions
+must be valid or a run-time error will be thrown.
+
+There is no limit on the length of strings, or the number of embedded
+expressions.
+
+## Comments
+
+There are three types of comments: Two line comments and one block
+comment.
+
+Line comments start with either a single *square* or *hash* (`#`) or
+two forward slashes (`//`). These comments go to the end of the line.
+
+Block comments start with a forward slash followed by an asterisk, and
+end with an asterisk followed by a forward slash (`/* */`). Block
+comments can span multiple lines, and they can also be nested. The
+nesting must have matching start and end delimiters.
+ 
+## Identifiers
+
+Valid characters in identifier names are
+
+    ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    abcdefghijklmnopqrstuvwxyz
+    1234567890
+    §@$£¤?_
+
+Identifiers may not start with a digit.
+
+There is no limit on the length of an identifier.
+
+## Numbers
