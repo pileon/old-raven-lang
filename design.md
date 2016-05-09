@@ -1,6 +1,8 @@
-# Formal grammar
+# Design
 
-This file contains the formal grammar for the language.
+This file is used for the design of the language. It contains the
+definition of the language, including grammar rules, symbol naming
+scheme, etc.
 
 ## Grammar
 
@@ -387,7 +389,15 @@ There is no limit on the length of an identifier.
 
 ## Numbers
 
-Raven Script only support 64-bit signed integers. 
+Raven script only support 64-bit signed integers. 
+
+Since Raven script uses the platform native 64-bit integers the range
+depends on the underlying system. Using the most common
+[Two's complement](https://en.wikipedia.org/wiki/Two's_complement)
+the range is -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807.
+With the less common
+[one's complement](https://en.wikipedia.org/wiki/Ones'_complement)
+the range is -9,223,372,036,854,775,807 to 9,223,372,036,854,775,807.
 
 It should be noted that like C and C++, Raven script doesn't really
 have negative number literals. Instead to get a negative number one
