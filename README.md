@@ -76,7 +76,7 @@ expression in literal string constants.
 
 ## Questions that might be frequently asked some time in the future
 
-**Q.** What is the difference between a class and an object?
+**Q.** What is the difference between a class and an object?<br/>
 **A.** A class is like a *blueprint* for an object. An object is an
 actual implementation of the blueprint.
 
@@ -84,14 +84,14 @@ A class can not be used as an object, and an object can't be used as
 a class. That means you can not use a class in expressions, and you
 can't inherit from an object.
 
-**Q.** Does an anonymous function capture its scope?
+**Q.** Does an anonymous function capture its scope?<br/>
 **A.** Yes, if you have an anonymous function as part of an expression
 it will capture its surrounding scope.
 
 Example:
 
     var foo = 5
-    function(){ print("i = %{i}\n") }()
+    function(){ print("foo = %{foo}\n") }()
 
 When declaring a named function (like `fib` in the [Fibonacci](#fibonacci) example
 above) the scope is not captured.
