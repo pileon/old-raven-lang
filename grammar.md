@@ -364,11 +364,12 @@ Valid characters in identifier names are
     1234567890
     §@$£¤?_
 
-Identifiers may not start with a digit. When parsing identifier names
-the standard
-[`isalpha`](http://en.cppreference.com/w/cpp/string/byte/isalpha)
-and [`isalnum`](http://en.cppreference.com/w/cpp/string/byte/isalnum)
-functions are used, which may extend the valud letters depending on
+Identifiers may not start with a digit.
+
+When parsing identifier names the standard
+[`isalpha`](http://en.cppreference.com/w/cpp/string/byte/isalpha) and
+[`isalnum`](http://en.cppreference.com/w/cpp/string/byte/isalnum)
+functions are used, which may extend the valid letters depending on
 locale settings of the system. The "standard" 26 English letters will
 always be available.
 
@@ -381,3 +382,30 @@ Raven Script only support 64-bit signed integers.
 It should be noted that like C and C++, Raven script doesn't really
 have negative number literals. Instead to get a negative number one
 must use the unary negation operator.
+
+## Scoping and definition order
+
+Raven script uses strict scoping of symbols. A symbol defined in an
+inner scope will no longer exist in an outer scope.
+
+A symbol defined in an outer scope may be redefined (shadowed) in an
+inner scope. There is no scoping operator in Raven script, which means
+that there is no way to access the symbol from the outer scope if it
+has been shadowed in an inner scope.
+
+Symbols defined in an outer scope are available in an inner scope, if
+it haven't been shadowed by an inner definition.
+
+Class inheritance brings scoping. The parent class is an outer scope
+while the child class is an inner scope. However for classes and
+objects it is possible to access variables in the parent classes by
+using the `super()` built-in function.
+
+Definition order of symbols is strictly from top to botton in the
+source file. Symbols defined at the top are defined before symbols
+defined at the bottom.
+
+Symbols must be defined before they are referenced. The only exception
+is expressions embedded in strings: As these expressions are lazily
+evaluated symbols must have been defined before the expression is
+evaluated by the interpreter.
