@@ -243,6 +243,8 @@ This file contains the formal grammar for the language.
         | function
         | class
         | object
+        | list
+        | map
         ;
         
     function
@@ -306,6 +308,25 @@ This file contains the formal grammar for the language.
     class
         : property_visibility OBJECT opt_inheritance '{' /* empty */ '}'
         | property_visibility OBJECT opt_inheritance '{' property_list '}'
+        ;
+        
+    list
+        : '[' /* empty */ ']'
+        | '[' expression_list ']'
+        ;
+        
+    map
+        : '{' /* empty */ '}'
+        | '{' map_list '}'
+        ;
+        
+    map_list
+        : map_element
+        | map_element ',' map_list
+        ;
+        
+    map_element
+        : expression ':' expression
         ;
 
 ## Constant string literals
