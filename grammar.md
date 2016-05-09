@@ -369,3 +369,9 @@ Identifiers may not start with a digit.
 There is no limit on the length of an identifier.
 
 ## Numbers
+
+Raven Script only support 64-bit signed integers. 
+
+It should be noted that like C and C++, Raven script doesn't really
+have negative number literals. Instead to get a negative number one
+must use the unary negation operator.
