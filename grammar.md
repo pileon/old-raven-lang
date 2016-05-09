@@ -32,6 +32,7 @@ This file contains the formal grammar for the language.
         | jump_stmt
         | block_stmt
         | switch_stmt
+        | use_stmt
         ;
     
     declaration_stmt
@@ -125,6 +126,15 @@ This file contains the formal grammar for the language.
         
     single_case
         : CASE expression ':'
+        ;
+        
+    use_stmt
+        : USE use_identifier
+        ;
+        
+    use_identifier
+        : IDENT
+        | IDENT '.' use_identifier
         ;
         
     expression_list
