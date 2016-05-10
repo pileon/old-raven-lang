@@ -354,6 +354,34 @@ must be valid or a run-time error will be thrown.
 There is no limit on the length of strings, or the number of embedded
 expressions.
 
+### Special characters
+
+To include special characters, like newlines or actual double-quote,
+special *escape* sequences are used. All start with a back-slash.
+
+Special characters
+
+* Newline `\n`
+* carriage return `\r`
+* Tab `\t`
+* Alert (or bell) `\a`
+* Nackspace `\b`
+* The escape character `\e`
+* Double-quote `\"`
+* Literal percentage `\%`
+
+Besides the  special characters listed above, octal, hexadecimal and
+Unicode characters are allowed. Octal values begins with a backslash
+followed by a zero and the octal digits. Hexadecimal numbers start
+with a backslash followed by an upper- or lower-case `x` and then the
+hexadecimal digits. Unicode characters start with a backslash followed
+by an upper- or lower-case `u` and then up to 8 hexadecimal digits.
+
+Both octal and hexadecimal numbers are signed 64 bit values, and can
+include the whole range from zero to 9223372036854775807 (inclusive).
+Negative numbers are not allowed. Unicode character numbers are 32 bit
+unsigned integers.
+
 ## Comments
 
 There are three types of comments: Two line comments and one block
@@ -402,6 +430,23 @@ the range is -9,223,372,036,854,775,807 to 9,223,372,036,854,775,807.
 It should be noted that like C and C++, Raven script doesn't really
 have negative number literals. Instead to get a negative number one
 must use the unary negation operator.
+
+### Other bases
+
+Raven script can have hexadecimal, octal and binary numbers.
+
+Octal numbers start with a leading zero, followed by the octal number.
+Only digits `0` to `7` (inclusive) are allowed.
+
+Binary numbers start with a leading zero followed by a `b` (or `B`)
+followed by the binary number. Only the binary digits `0` and `1` are
+allowed.
+
+Hexadecimal numbers start with a leading zero followed by a `x`
+(or `X`) followed by the hexadecimal number. For the high digits,
+value `10` to `15`, the letters `a` to `f` are used, with `a` being
+`10` and `f` being `15`. Both upper- and lower-case letters are
+allowed.
 
 ## Scoping and definition order
 
