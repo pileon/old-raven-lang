@@ -28,12 +28,12 @@ namespace compiler
             class number : public token
             {
             public:
-                long double value() const
+                int64_t value() const
                 {
                     return value_;
                 }
             private:
-                long double value_;
+                int64_t value_;
             };
 
             class string : public token
