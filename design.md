@@ -344,7 +344,7 @@ scheme, etc.
 ## Constant string literals
 
 Constant string literals are enclosed in double quotes (`"`).
- 
+
 Constant string literals might contain embedded expressions. They start
 with a percentage (`%`) and the expression is enclosed in curly-braces
 (`{}`). Embedded expressions are evaluated lazily, when the constant
