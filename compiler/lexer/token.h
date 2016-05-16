@@ -1,70 +1,67 @@
-//
-// Created by joachimp on 2016-04-26.
-//
-
 #ifndef RAVEN_LANG_TOKEN_H
 #define RAVEN_LANG_TOKEN_H
 
 namespace compiler
 {
-    namespace lexer
+    class token
     {
-        class token
+    public:
+        token()
+            : filename_{}, linenumber_{}, lexeme_{}
+        {}
+
+        std::string const& lexeme() const
+        {
+            return lexeme_;
+        }
+
+    private:
+        std::string  filename_;    // Name of file token comes from
+        unsigned int linenumber_;  // Line in file the token comes from
+        std::string  lexeme_;      // The token lexeme
+    };
+
+    namespace tokens
+    {
+        class number : public token
         {
         public:
-            std::string const& lexeme() const
+            int64_t value() const
             {
-                return lexeme_;
+                return value_;
+            }
+        private:
+            int64_t value_;
+        };
+
+        class string : public token
+        {
+        public:
+            std::string const& value() const
+            {
+                return lexeme();
             }
 
         private:
-            std::string  filename_;    // Name of file token comes from
-            unsigned int linenumber_;  // Line in file the token comes from
-            std::string  lexeme_;      // The token lexeme
         };
 
-        namespace tokens
+        class keyword : public token
         {
-            class number : public token
+        public:
+            std::string const& value() const
             {
-            public:
-                int64_t value() const
-                {
-                    return value_;
-                }
-            private:
-                int64_t value_;
-            };
+                return lexeme();
+            }
 
-            class string : public token
-            {
-            public:
-                std::string const& value() const
-                {
-                    return lexeme();
-                }
+        private:
+        };
 
-            private:
-            };
+        class op : public token
+        {
+        public:
 
-            class keyword : public token
-            {
-            public:
-                std::string const& value() const
-                {
-                    return lexeme();
-                }
-
-            private:
-            };
-
-            class op : public token
-            {
-            public:
-
-            private:
-            };
-        }
+        private:
+        };
     }
 }
 
