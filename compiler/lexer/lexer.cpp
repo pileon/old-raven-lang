@@ -1,6 +1,11 @@
-//
-// Created by joachimp on 2016-04-26.
-//
+#include "lexer.h"
 
-#include <string>
-#include "token.h"
+namespace compiler
+{
+    token& lexer::get()
+    {
+        static token dummy;
+        return dummy;
+    }
+}
+
