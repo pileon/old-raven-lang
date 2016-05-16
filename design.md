@@ -365,7 +365,7 @@ Special characters
 * carriage return `\r`
 * Tab `\t`
 * Alert (or bell) `\a`
-* Nackspace `\b`
+* Backspace `\b`
 * The escape character `\e`
 * Double-quote `\"`
 * Literal percentage `\%`
@@ -466,7 +466,7 @@ while the child class is an inner scope. However for classes and
 objects it is possible to access variables in the parent classes by
 using the `super()` built-in function.
 
-Definition order of symbols is strictly from top to botton in the
+Definition order of symbols is strictly from top to bottom in the
 source file. Symbols defined at the top are defined before symbols
 defined at the bottom.
 
