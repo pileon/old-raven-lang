@@ -1,0 +1,5 @@
+#ifndef RAVEN_LANG_BUFFER_H
+#define RAVEN_LANG_BUFFER_H
+
+
+#endif //RAVEN_LANG_BUFFER_H
