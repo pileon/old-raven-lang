@@ -13,7 +13,7 @@ namespace compiler
          *
          * The buffer scheme uses two buffers, one "current" buffer and one that was
          * the previous buffer. When the end of the current buffer is reached the
-         * previous buffer is filled with data, and sthen et to the current buffer.
+         * previous buffer is filled with data, and then et to the current buffer.
          *
          * Using double-buffering like this gives us large headroom for unget/putback,
          * which helps the lexer handle advanced multi-character tokens.
@@ -22,6 +22,9 @@ namespace compiler
         class basic_buffer
         {
         public:
+            virtual ~basic_buffer()
+            {}
+
             /**
              * \brief Get the name of the buffer
              * \return A string containing the name of the buffer
@@ -35,38 +38,56 @@ namespace compiler
              * \brief Get the next character from the current buffer
              * \return The next character
              * \retval end Returned when there is no more characters to read
-             * \note Made virtual because it's overridden by string_buffer
+             * \note Made virtual because it's overridden by basic_string_buffer
              */
-            virtual charT get();
+            virtual charT get()
+            {
+                return end;
+            }
 
             /**
              * \brief "Unget" the last character returned by get()
-             * \note Made virtual because it's overridden by string_buffer
+             * \note Made virtual because it's overridden by basic_string_buffer
              */
-            virtual void unget();
+            virtual void unget()
+            {}
 
             /**
              * \brief Put back a character into the buffer
              * \param ch The character to put back
-             * \note Made virtual because it's overridden by string_buffer
+             * \note Made virtual because it's overridden by basic_string_buffer
              *
              * Put back a character into the buffer. This will be the next character
              * returned by get().
              */
-            virtual void putback(charT const& ch);
+            virtual void putback(charT const& ch)
+            {}
 
             /**
              * \brief Returned by get() to mark the end of the input
              */
-            static constexpr charT end = reinterpret_cast<charT>(-1);
+            enum : charT
+            {
+                end = -1
+            };
+            // static constexpr charT end = reinterpret_cast<charT>(-1);
+
+            basic_buffer(basic_buffer&&) = delete;
+            basic_buffer(basic_buffer const&) = delete;
+            basic_buffer& operator=(basic_buffer&&) = delete;
+            basic_buffer& operator=(basic_buffer const&) = delete;
 
         protected:
             basic_buffer()
-                    : name_{}
+                    : name_{}, size_{},
+                      buffer_{}, endfirst_{}, endsecond_{},
+                      end_{}, current_{}
             {}
 
             basic_buffer(std::string const& name)
-                    : name_{name}
+                    : name_{name}, size_{},
+                      buffer_{}, endfirst_{}, endsecond_{},
+                      end_{}, current_{}
             {}
 
             /**
@@ -92,24 +113,26 @@ namespace compiler
             size_t size_;       //!< The size of a single buffer
             charT* buffer_;     //!< The double buffer
             charT* endfirst_;   //!< The end of the first buffer
-            charT* endsecond;   //!< The end of the second buffer
+            charT* endsecond_;  //!< The end of the second buffer
             charT* end_;        //!< If not nullptr, marks the final end of the input
             charT* current_;    //!< Current position in the buffer(s)
         };
 
+        using buffer = basic_buffer<char>;
+
 
 
         template<typename charT>
-        class string_buffer : public basic_buffer<charT>
+        class basic_string_buffer : public basic_buffer<charT>
         {
         public:
             using basic_buffer<charT>::end;
 
-            string_buffer()
+            basic_string_buffer()
                     : basic_buffer<charT>(), string_{}, current_{string_.end()}
             {}
 
-            string_buffer(std::basic_string<charT> const& string,
+            basic_string_buffer(std::basic_string<charT> const& string,
                           std::string const& name = "")
                     : basic_buffer<charT>(name),
                       string_{string}, current_{string_.begin()}
@@ -146,14 +169,16 @@ namespace compiler
         private:
             using string_t = std::basic_string<charT>;
 
-            size_t fill_buffer(charT* buffer, size_t const length)
+            size_t fill_buffer(charT*, size_t const)
             {
                 return 0;
             }
 
             string_t string_;    //!< The string buffer
-            typename string_t::const_iterator current_; //!< Current character
+            typename string_t::iterator current_; //!< Current character
         };
+
+        using string_buffer = basic_string_buffer<char>;
     }
 }
 
