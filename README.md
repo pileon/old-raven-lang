@@ -8,7 +8,7 @@ A generic script language, but made primarily for use in the Raven MUD server.
 * Everything is first-class
 * Dynamic typing
 * Syntax similar to C and C++
-* Extendable, possible to add syntactic structures
+* Extensible, possible to add syntactic structures
 
 ## Examples
 
