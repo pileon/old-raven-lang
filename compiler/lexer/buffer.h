@@ -62,7 +62,11 @@ namespace compiler
 
         protected:
             basic_buffer()
-                : name_{}
+                    : name_{}
+            {}
+
+            basic_buffer(std::string const& name)
+                    : name_{name}
             {}
 
             /**
@@ -93,13 +97,62 @@ namespace compiler
             charT* current_;    //!< Current position in the buffer(s)
         };
 
+
+
         template<typename charT>
         class string_buffer : public basic_buffer<charT>
         {
         public:
+            using basic_buffer<charT>::end;
+
             string_buffer()
-                : basic_buffer<charT>()
+                    : basic_buffer<charT>(), string_{}, current_{string_.end()}
             {}
+
+            string_buffer(std::basic_string<charT> const& string,
+                          std::string const& name = "")
+                    : basic_buffer<charT>(name),
+                      string_{string}, current_{string_.begin()}
+            {}
+
+            void set(std::basic_string<charT> const& string)
+            {
+                string_  = string;
+                current_ = string_.begin();
+            }
+
+            charT get()
+            {
+                if (current_ == string_.end())
+                    return end;
+                return *current_++;
+            }
+
+            void unget()
+            {
+                if (current_ != string_.begin())
+                    --current_;
+            }
+
+            void putback(charT const& ch)
+            {
+                if (current_ != string_.begin())
+                {
+                    unget();
+                    *current_ = ch;
+                }
+            }
+
+        private:
+            using string_t = std::basic_string<charT>;
+
+            size_t fill_buffer(charT* buffer, size_t const length)
+            {
+                return 0;
+            }
+
+            string_t string_;    //!< The string buffer
+            typename string_t::const_iterator current_; //!< Current character
         };
     }
 }
