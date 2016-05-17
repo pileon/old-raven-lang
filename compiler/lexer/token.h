@@ -3,14 +3,15 @@
 
 namespace compiler
 {
-    class token
+    template<typename charT>
+    class basic_token
     {
     public:
-        token()
+        basic_token()
             : filename_{}, linenumber_{}, lexeme_{}
         {}
 
-        std::string const& lexeme() const
+        std::basic_string<charT> const& lexeme() const
         {
             return lexeme_;
         }
@@ -23,7 +24,8 @@ namespace compiler
 
     namespace tokens
     {
-        class number : public token
+        template<typename charT>
+        class basic_number : public basic_token<charT>
         {
         public:
             int64_t value() const
@@ -34,29 +36,32 @@ namespace compiler
             int64_t value_;
         };
 
-        class string : public token
+        template<typename charT>
+        class basic_string : public basic_token<charT>
         {
         public:
-            std::string const& value() const
+            std::basic_string<charT> const& value() const
             {
-                return lexeme();
+                return this->lexeme();
             }
 
         private:
         };
 
-        class keyword : public token
+        template<typename charT>
+        class basic_keyword : public basic_token<charT>
         {
         public:
-            std::string const& value() const
+            std::basic_string<charT> const& value() const
             {
-                return lexeme();
+                return this->lexeme();
             }
 
         private:
         };
 
-        class op : public token
+        template<typename charT>
+        class basic_op : public basic_token<charT>
         {
         public:
 
