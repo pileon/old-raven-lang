@@ -2,12 +2,31 @@
 #define RAVEN_LANG_LEXER_H
 
 #include <queue>
-#include <functional>
-#include <istream>
+#include <memory>
 #include "token.h"
+#include "buffer.h"
 
 namespace compiler
 {
+    namespace lexer
+    {
+        /**
+         * \brief Lexical tokenizer class
+         */
+        template<typename charT>
+        class basic_tokenizer
+        {
+        public:
+            basic_tokenizer()
+                : buffers_{}
+            {}
+
+        private:
+            std::queue<std::unique_ptr<buffers::basic_buffer<charT>>> buffers_;
+        };
+
+        using tokenizer = basic_tokenizer<char>;
+    }
 //    class lexer
 //    {
 //    public:
