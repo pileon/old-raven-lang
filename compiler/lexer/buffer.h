@@ -178,6 +178,41 @@ namespace compiler
         };
 
         using string_buffer = basic_string_buffer<char>;
+
+
+
+        template<typename charT>
+        class basic_file_buffer : public basic_buffer<charT>
+        {
+        public:
+            using basic_buffer<charT>::end;
+
+            /**
+             * \brief Open file
+             * \param name The name of the file to open
+             * \return Success/failure status
+             * \retval true If file opened successfully
+             * \retval false If file failed to open
+             */
+            virtual bool open(std::string const& name) = 0;
+
+            /**
+             * \brief Close the file
+             *
+             * After closing the buffer can't be used any more.
+             */
+            virtual void close() = 0;
+
+            /**
+             * \brief Check if the file is open or not
+             * \return The status of the file-buffer
+             * \retval true If the file-buffer is opened
+             * \retval false If the file-buffer is not opened
+             */
+            virtual bool is_open() = 0;
+        };
+
+        using file_buffer = basic_file_buffer<char>;
     }
 }
 
