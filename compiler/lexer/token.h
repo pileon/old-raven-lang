@@ -27,6 +27,25 @@ namespace compiler
             return lexeme_;
         }
 
+        /**
+         * \brief Compare to other token
+         * \return If the two tokens are equal or not
+         * \retval true The two tokens are equal
+         * \retval false The two tokens are not equal
+         */
+        friend bool operator==(basic_token const& lhs, basic_token const& rhs)
+        {
+            return lhs.is_equal_to(rhs);
+        }
+
+        friend bool operator!=(basic_token const& lhs, basic_token const& rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+    protected:
+        virtual bool is_equal_to(basic_token const&) const = 0;
+
     private:
         std::string  filename_;    // Name of file token comes from
         unsigned int linenumber_;  // Line in file the token comes from
@@ -44,6 +63,12 @@ namespace compiler
                 return value_;
             }
 
+        protected:
+            bool is_equal_to(basic_token<charT> const&) const
+            {
+                return false;
+            }
+
         private:
             int64_t value_;
         };
@@ -55,6 +80,12 @@ namespace compiler
             std::basic_string<charT> const& value() const
             {
                 return this->lexeme();
+            }
+
+        protected:
+            bool is_equal_to(basic_token<charT> const&) const
+            {
+                return false;
             }
 
         private:
@@ -69,6 +100,12 @@ namespace compiler
                 return this->lexeme();
             }
 
+        protected:
+            bool is_equal_to(basic_token<charT> const&) const
+            {
+                return false;
+            }
+
         private:
         };
 
@@ -76,6 +113,12 @@ namespace compiler
         class basic_op : public basic_token<charT>
         {
         public:
+
+        protected:
+            bool is_equal_to(basic_token<charT> const&) const
+            {
+                return false;
+            }
 
         private:
         };
@@ -86,42 +129,15 @@ namespace compiler
             end_() : basic_token<charT>{ }
             {
             }
+
+        protected:
+            bool is_equal_to(basic_token<charT> const&) const
+            {
+                return false;
+            }
         };
 
         static end_<char> end;
-
-        template<typename charT>
-        bool operator==(basic_token<charT> const& lhs, end_<charT> const& rhs)
-        {
-            return false;
-        }
-
-        template<typename charT>
-        bool operator!=(end_<charT> const& lhs, basic_token<charT> const& rhs)
-        {
-            return false;
-        }
-    }
-
-    /**
-     * \brief Compare to other token
-     * \return If the two tokens are equal or not
-     * \retval true The two tokens are equal
-     * \retval false The two tokens are not equal
-     */
-    template<typename charT>
-    bool operator==(basic_token<charT> const& lhs, basic_token<charT> const& rhs)
-    {
-        if (&lhs == &rhs)
-            return true;
-
-        return lhs.lexeme() == rhs.lexeme();
-    }
-
-    template<typename charT>
-    bool operator!=(basic_token<charT> const& lhs, basic_token<charT> const& rhs)
-    {
-        return !(lhs == rhs);
     }
 }
 
