@@ -60,7 +60,7 @@ namespace compiler
              * Put back a character into the buffer. This will be the next character
              * returned by get().
              */
-            virtual void putback(charT const& ch)
+            virtual void putback(charT const& ch __attribute__((unused)))
             {}
 
             /**
