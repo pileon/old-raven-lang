@@ -70,7 +70,6 @@ namespace compiler
             {
                 end = -1
             };
-            // static constexpr charT end = reinterpret_cast<charT>(-1);
 
             basic_buffer(basic_buffer&&) = delete;
             basic_buffer(basic_buffer const&) = delete;
