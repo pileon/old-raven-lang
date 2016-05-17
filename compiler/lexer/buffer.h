@@ -121,6 +121,11 @@ namespace compiler
 
 
 
+        /**
+         * \brief A string buffer
+         *
+         * Use a string as a buffer. Will return `end` when at the end of the string.
+         */
         template<typename charT>
         class basic_string_buffer : public basic_buffer<charT>
         {
@@ -177,10 +182,13 @@ namespace compiler
             typename string_t::iterator current_; //!< Current character
         };
 
-        using string_buffer = basic_string_buffer<char>;
+        using string_buffer = basic_string_buffer<char>;    //!< Type alias for string buffer using `char` type
 
 
 
+        /**
+         * \brief Basic file buffer interface
+         */
         template<typename charT>
         class basic_file_buffer : public basic_buffer<charT>
         {
