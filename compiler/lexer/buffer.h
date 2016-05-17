@@ -75,13 +75,12 @@ namespace compiler
                     end = -1
                 };
 
-                basic_buffer(basic_buffer&&)      = delete;
-
+                // Disallow copying
                 basic_buffer(basic_buffer const&) = delete;
-
-                basic_buffer& operator=(basic_buffer&&) = delete;
-
                 basic_buffer& operator=(basic_buffer const&) = delete;
+
+                basic_buffer(basic_buffer&&) = default;
+                basic_buffer& operator=(basic_buffer&&) = default;
 
             protected:
                 basic_buffer()

@@ -31,7 +31,7 @@ namespace compiler
 
         private:
             std::queue<std::unique_ptr<buffers::basic_buffer<charT>>> buffers_;
-            basic_token<charT> token_;     //!< Last token returned from get()
+            std::unique_ptr<basic_token<charT>> token_;     //!< Last token returned from get()
         };
 
         using tokenizer = basic_tokenizer<char>;
