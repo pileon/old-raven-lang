@@ -13,7 +13,25 @@ add_compile_options(${WARNING_OPTIONS} -std=c++14 -pipe)
 find_package(Boost
         REQUIRED COMPONENTS program_options system)
 
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    set(DOXYGEN_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/raven-language.doxyfile)
+    set(DOXYGEN_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/doc)
+
+    add_custom_command(
+            OUTPUT ${DOXYGEN_OUTPUT}
+            COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIG}
+            COMMAND ${CMAKE_COMMAND} -E echo "Done."
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            DEPENDS ${DOXYGEN_CONFIG}
+    )
+
+    add_custom_target(apidoc ALL DEPENDS ${DOXYGEN_OUTPUT})
+endif()
+
 set(SOURCE_FILES main.cpp)
 add_executable(raven_lang ${SOURCE_FILES})
 
 add_subdirectory(compiler)
+
