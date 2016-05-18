@@ -5,8 +5,11 @@
 #include <iostream>
 #include <memory>
 #include "buffer.h"
+#include "lexer.h"
+#include "token.h"
 
-namespace b = compiler::lexer::buffers;
+namespace l = compiler::lexer;
+namespace b = l::buffers;
 
 namespace
 {
@@ -39,9 +42,34 @@ namespace
             std::cout << "Second character again: " << buffer->get() << '\n';
         }
     }
+
+    void test_tokenizer()
+    {
+        std::string fib = R"(# Recursively calculate a Fibonacci number
+var fib = function(n)
+{
+    if (n == 0 || n == 1)
+        return n;
+
+    return fib(n - 1) + fib(n - 2);
+}
+
+# Print the first ten Fibonacci numbers
+for (i : 1..10)
+    print("Fibbonacci for %{i} is %{fib(i)}\n");
+)";
+
+        std::unique_ptr<b::buffer> buffer = std::make_unique<b::string_buffer>(fib, "fib");
+        l::tokenizer tokenizer(std::move(buffer));
+
+        while (tokenizer.get() != compiler::tokens::end)
+        {
+        }
+    }
 }
 
 int main()
 {
     test_lexer_buffer();
+    test_tokenizer();
 }
