@@ -46,6 +46,11 @@ namespace compiler
     protected:
         virtual bool is_equal_to(basic_token const&) const = 0;
 
+        void lexeme(std::basic_string<charT> const& lex)
+        {
+            lexeme_ = lex;
+        }
+
     private:
         std::string  filename_;    // Name of file token comes from
         unsigned int linenumber_;  // Line in file the token comes from
@@ -58,6 +63,12 @@ namespace compiler
         class basic_number : public basic_token<charT>
         {
         public:
+            basic_number() = delete;
+
+            explicit basic_number(int64_t value)
+                : basic_token<charT>{}, value_{value}
+            {}
+
             int64_t value() const
             {
                 return value_;
@@ -77,6 +88,14 @@ namespace compiler
         class basic_string : public basic_token<charT>
         {
         public:
+            basic_string() = delete;
+
+            explicit basic_string(std::basic_string<charT> const& value)
+                 : basic_token<charT>{}
+            {
+                lexeme(value);
+            }
+
             std::basic_string<charT> const& value() const
             {
                 return this->lexeme();
@@ -95,6 +114,14 @@ namespace compiler
         class basic_keyword : public basic_token<charT>
         {
         public:
+            basic_keyword() = delete;
+
+            explicit basic_keyword(std::basic_string<charT> const& value)
+                : basic_token<charT>{}
+            {
+                lexeme(value);
+            }
+
             std::basic_string<charT> const& value() const
             {
                 return this->lexeme();
@@ -113,6 +140,13 @@ namespace compiler
         class basic_op : public basic_token<charT>
         {
         public:
+            basic_op() = delete;
+
+            explicit basic_op(std::basic_string<charT> const& value)
+                : basic_token<charT>{}
+            {
+                lexeme(value);
+            }
 
         protected:
             bool is_equal_to(basic_token<charT> const&) const
