@@ -56,6 +56,11 @@ namespace compiler
             {
                 return buffers_.front().get();
             }
+
+            bool is_end(charT const ch) const
+            {
+                return ch == buffers::basic_buffer<charT>::end;
+            }
         };
 
         using tokenizer = basic_tokenizer<char>;
