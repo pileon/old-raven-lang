@@ -9,10 +9,6 @@ namespace compiler
     class basic_token
     {
     public:
-        basic_token()
-            : filename_{}, linenumber_{}, lexeme_{}
-        {}
-
         virtual ~basic_token()
         {}
 
@@ -44,6 +40,10 @@ namespace compiler
         }
 
     protected:
+        basic_token()
+                : filename_{}, linenumber_{}, lexeme_{}
+        {}
+
         virtual bool is_equal_to(basic_token const&) const = 0;
 
         void lexeme(std::basic_string<charT> const& lex)
@@ -75,9 +75,9 @@ namespace compiler
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const&) const
+            bool is_equal_to(basic_token<charT> const& rhs) const
             {
-                return false;
+                return dynamic_cast<basic_number<charT> const*>(&rhs) != nullptr;
             }
 
         private:
@@ -102,9 +102,9 @@ namespace compiler
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const&) const
+            bool is_equal_to(basic_token<charT> const& rhs) const
             {
-                return false;
+                return dynamic_cast<basic_string<charT> const*>(&rhs) != nullptr;
             }
 
         private:
@@ -128,9 +128,10 @@ namespace compiler
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const&) const
+            bool is_equal_to(basic_token<charT> const& rhs) const
             {
-                return false;
+                return dynamic_cast<basic_keyword<charT> const*>(&rhs) != nullptr &&
+                       this->lexeme() == rhs.lexeme();
             }
 
         private:
@@ -149,9 +150,10 @@ namespace compiler
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const&) const
+            bool is_equal_to(basic_token<charT> const& rhs) const
             {
-                return false;
+                return dynamic_cast<basic_op<charT> const*>(&rhs) != nullptr &&
+                       this->lexeme() == rhs.lexeme();
             }
 
         private:
@@ -160,14 +162,15 @@ namespace compiler
         template<typename charT>
         struct end_ : public basic_token<charT>
         {
-            end_() : basic_token<charT>{ }
+            end_()
+                : basic_token<charT>{}
             {
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const&) const
+            bool is_equal_to(basic_token<charT> const& rhs) const
             {
-                return false;
+                return dynamic_cast<end_<charT> const*>(&rhs) != nullptr;
             }
         };
 
