@@ -24,6 +24,12 @@ endif()
 find_package(Boost
         REQUIRED COMPONENTS program_options system)
 
+include(CheckIncludeFiles)
+
+# Check for new C++14 and C++17 features used by the compiler
+check_include_files(any HAVE_HEADER_ANY)
+check_include_files(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
+
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
     set(DOXYGEN_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/raven-language.doxyfile)
@@ -54,3 +60,4 @@ add_executable(raven_lang ${SOURCE_FILES})
 
 add_subdirectory(compiler)
 
+configure_file(autoconf.h.in ${CMAKE_SOURCE_DIR}/autoconf.h)

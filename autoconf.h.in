@@ -1,0 +1,2 @@
+/* #undef HAVE_HEADER_ANY */
+/* #undef HAVE_HEADER_EXPERIMENTAL_ANY */
