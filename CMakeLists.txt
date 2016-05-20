@@ -3,6 +3,7 @@ project(raven_lang LANGUAGES CXX)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 
 list(APPEND WARNING_OPTIONS -Wall -Wextra -Weffc++)
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
@@ -11,7 +12,14 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     list(APPEND WARNING_OPTIONS -pedantic)
 endif()
 
-add_compile_options(${WARNING_OPTIONS} -std=c++14 -pipe -pthread)
+add_compile_options(${WARNING_OPTIONS} -pipe -pthread)
+if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
+    add_compile_options(-std=c++1z -stdlib=libc++)
+    # add_compile_options(-stdlib=libc++ -std=c++1z)
+    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+else()
+    add_compile_options(-std=c++14)
+endif()
 
 find_package(Boost
         REQUIRED COMPONENTS program_options system)
