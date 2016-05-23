@@ -1,2 +1,3 @@
-/* #undef HAVE_HEADER_ANY */
-/* #undef HAVE_HEADER_EXPERIMENTAL_ANY */
+#cmakedefine HAVE_HEADER_ANY
+#cmakedefine HAVE_HEADER_EXPERIMENTAL_ANY
+#cmakedefine HAVE_HEADER_BOOST_ANY

@@ -1,7 +1,30 @@
 #ifndef RAVEN_LANG_TOKEN_H
 #define RAVEN_LANG_TOKEN_H
 
+#include "../../autoconf.h"
+
 #include <string>
+#if defined(HAVE_HEADER_ANY)
+# include <any>
+#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
+# include <experimental/any>
+namespace std
+{
+    using std::experimental::any;
+    using std::experimental::any_cast;
+    using std::experimental::bad_any_cast;
+}
+#elif defined(HAVE_HEADER_BOOST_ANY)
+# include <boost/any.hpp>
+namespace std
+{
+    using boost::any;
+    using boost::any_cast;
+    using boost::bad_any_cast;
+}
+#else
+# error No any header available
+#endif
 
 namespace compiler
 {

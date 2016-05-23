@@ -12,23 +12,25 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     list(APPEND WARNING_OPTIONS -pedantic)
 endif()
 
-add_compile_options(${WARNING_OPTIONS} -pipe -pthread)
+list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe -pthread)
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
-    add_compile_options(-std=c++1z -stdlib=libc++)
-    # add_compile_options(-stdlib=libc++ -std=c++1z)
-    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+    list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
 else()
-    add_compile_options(-std=c++14)
+    list(APPEND COMPILER_OPTIONS -std=c++14)
 endif()
+add_compile_options(${COMPILER_OPTIONS})
+string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${COMPILER_OPTIONS}")
 
 find_package(Boost
         REQUIRED COMPONENTS program_options system)
 
-include(CheckIncludeFiles)
+include(CheckIncludeFileCXX)
 
 # Check for new C++14 and C++17 features used by the compiler
-check_include_files(any HAVE_HEADER_ANY)
-check_include_files(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
+check_include_file_cxx(any HAVE_HEADER_ANY)
+check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
+# TODO: Why oh why doesn't the above work with CLion???
+check_include_file_cxx(experimental/any HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
