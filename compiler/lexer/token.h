@@ -39,6 +39,12 @@ namespace compiler
             return !(lhs == rhs);
         }
 
+        template<typename tokenT>
+        constexpr bool is() const
+        {
+            return std::is_same<decltype(self()), tokenT>::value;
+        }
+
     protected:
         basic_token()
                 : filename_{}, linenumber_{}, lexeme_{}
@@ -51,11 +57,15 @@ namespace compiler
             lexeme_ = lex;
         }
 
+        virtual basic_token const& self() const { return *this; }
+
     private:
         std::string  filename_;    // Name of file token comes from
         unsigned int linenumber_;  // Line in file the token comes from
         std::basic_string<charT>  lexeme_;      // The token lexeme
     };
+
+    using token = basic_token<char>;
 
     namespace tokens
     {
@@ -168,13 +178,17 @@ namespace compiler
             }
 
         protected:
-            bool is_equal_to(basic_token<charT> const& rhs) const
+            bool is_equal_to(basic_token<charT> const& rhs) const override
             {
                 return dynamic_cast<end_<charT> const*>(&rhs) != nullptr;
             }
+
+            basic_token<charT> const& self() const override { return *this; }
         };
 
-        static end_<char> end;
+        static end_<char> endd;
+
+        using end = end_<char>;
     }
 }
 

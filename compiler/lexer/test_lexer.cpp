@@ -10,6 +10,7 @@
 
 namespace l = compiler::lexer;
 namespace b = l::buffers;
+namespace t = compiler::tokens;
 
 namespace
 {
@@ -62,9 +63,19 @@ for (i : 1..10)
         std::unique_ptr<b::buffer> buffer = std::make_unique<b::string_buffer>(fib, "fib");
         l::tokenizer tokenizer(std::move(buffer));
 
-        while (tokenizer.get() != compiler::tokens::end)
-        {
-        }
+//        std::cout << "Starting tokenization...\n";
+//        for (;;)
+//        {
+//            auto& token = tokenizer.get();
+////            if (token == compiler::tokens::end)
+////                break;
+//            if (token.is<t::end>())
+//                break;
+//
+//
+//        }
+
+        std::cout << "Tokenization ended\n";
     }
 }
 
@@ -72,4 +83,5 @@ int main()
 {
     test_lexer_buffer();
     test_tokenizer();
+    std::cout << std::flush;
 }
