@@ -92,8 +92,8 @@ namespace compiler
                 while (!is_end(ch = next()) && ch != '\n' && std::isspace(ch))
                 {
                 }
-                if (is_end(ch))
-                    return return_token<tokens::end_<charT>>();
+//                if (is_end(ch))
+//                    return return_token<tokens::end_<charT>>();
 
                 // Check for comments
                 if (ch == '#')
@@ -109,8 +109,8 @@ namespace compiler
                     // TODO: skip_line() or skip_comment()
                 }
 
-                // TODO: Dummy token return
-                return return_token<tokens::basic_number<charT>>(0);
+//                // TODO: Dummy token return
+//                return return_token<tokens::basic_number<charT>>(0);
             }
         }
     }
