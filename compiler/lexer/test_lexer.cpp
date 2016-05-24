@@ -75,8 +75,10 @@ for (i : 1..10)
             switch (token.token())
             {
             case compiler::tokens::number:
-                std::cout << "    Number: " << std::any_cast<long long>(token.data()) << '\n';
+                std::cout << "    Number: " << std::any_cast<std::int64_t>(token.data()) << '\n';
                 break;
+
+            case compiler::tokens::newline:
 
             default:
                 std::cout << "    Unknown token: #" << static_cast<unsigned>(token.token()) << '\n';

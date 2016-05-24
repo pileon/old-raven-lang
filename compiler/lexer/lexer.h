@@ -6,6 +6,9 @@
 #include <queue>
 #include <deque>
 #include <memory>
+#include <cstdint>
+#include <cctype>
+#include <functional>
 
 #if defined(HAVE_HEADER_ANY)
 # include <any>
@@ -94,6 +97,11 @@ namespace compiler
                 return buffers_.front()->unget();
             }
 
+            charT peek() const
+            {
+                return buffers_.front()->peek();
+            }
+
             bool is_end(charT const ch) const
             {
                 return ch == buffers::basic_buffer<charT>::end;
@@ -106,6 +114,8 @@ namespace compiler
                 {
                 }
             }
+
+            basic_token<charT> get_number(int const base);
         };
 
         using tokenizer = basic_tokenizer<char>;
@@ -124,6 +134,13 @@ namespace compiler
                 if (is_end(ch))
                     return return_token(tokens::end);
 
+                // Check for newlines, used as statement separator
+                if (ch == '\n')
+                {
+                    ++linenumber_;
+                    return return_token(tokens::newline);
+                }
+
                 // Check for comments
                 if (ch == '#')
                 {
@@ -138,9 +155,89 @@ namespace compiler
                     // TODO: skip_line() or skip_comment()
                 }
 
+                // Check for numbers
+                if (std::isdigit(ch))
+                {
+                    int base = 10;
+
+                    if (ch == '0')
+                    {
+                        charT nch = next();
+                        if (nch == 'x' || nch == 'X')
+                            base = 16;
+                        else if (nch == 'o' || nch == 'O')
+                            base = 8;
+                        else if (nch == 'b' || nch == 'B')
+                            base = 2;
+                        else if (isdigit(nch))
+                        {
+                            // C and C++ compatibility
+                            unget();
+                            base = 8;
+                        }
+                        else
+                            unget();
+                    }
+
+                    if (base == 10)
+                        unget();
+
+                    return get_number(base);
+                }
+
+                // Check for keywords
+
+                // Check for operators
+
                 // TODO: Dummy token return
-                return return_token(tokens::number, 0ll);
+                return return_token(tokens::number, static_cast<std::int64_t>(0));
             }
+        }
+
+        template<typename charT>
+        basic_token<charT> basic_tokenizer<charT>::get_number(int const base)
+        {
+            std::function<int(int const)> isdigit;
+            std::function<int(int const)> tonumber;
+
+            auto dtonum = [](int const ch) -> int { return ch - '0'; };
+
+            switch (base)
+            {
+            case 2:
+                isdigit  = [](int const ch) -> int { return ch == '0' || ch == '1'; };
+                tonumber = dtonum;
+                break;
+            case 8:
+                isdigit  = [](int const ch) -> int { return std::isdigit(ch) && ch != '8' && ch != '9'; };
+                tonumber = dtonum;
+                break;
+            case 10:
+                isdigit  = std::bind(&::isdigit, std::placeholders::_1);
+                tonumber = dtonum;
+                break;
+            case 16:
+                isdigit  = std::bind(&::isxdigit, std::placeholders::_1);
+                tonumber = [dtonum](int const ch) -> int { return (::isdigit(ch) ? dtonum(ch) : ::tolower(ch) - 'a'); };
+                break;
+
+            default:
+                // TODO: Report and return error
+                break;
+            }
+
+            std::int64_t value = 0;
+            charT ch;
+
+            while (isdigit(ch = next()))
+            {
+                value = value * 10 + tonumber(ch);
+            }
+
+            // Last character was not a digit, put it back
+            unget();
+
+            return return_token(tokens::number, value);
         }
     }
 }

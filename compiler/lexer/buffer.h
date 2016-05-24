@@ -68,6 +68,16 @@ namespace compiler
                 }
 
                 /**
+                 * \brief Peek at the next character
+                 * \return The next character in the buffer
+                 * \retval end Returned when there is no more character in the buffer
+                 */
+                virtual charT peek() const
+                {
+                    return end;
+                }
+
+                /**
                  * \brief Returned by get() to mark the end of the input
                  */
                 enum : charT
