@@ -119,13 +119,13 @@ namespace compiler
     {
         // Forward declaration for friend declaration in token class
         template<typename charT>
-        class basic_lexer;
+        class basic_tokenizer;
     }
 
     template<typename charT>
     class basic_token
     {
-        friend lexer::basic_lexer<charT>;
+        friend lexer::basic_tokenizer<charT>;
 
     public:
         basic_token() = delete;
@@ -160,17 +160,32 @@ namespace compiler
             return data_;
         }
 
+        tokens token() const
+        {
+            return token_;
+        }
+
+        std::string const& name() const
+        {
+            return name_;
+        }
+
+        unsigned linenumber() const
+        {
+            return linenumber_;
+        }
+
     private:
-        explicit basic_token(std::string const& filename, unsigned linenumber,
+        explicit basic_token(std::string const& name, unsigned linenumber,
                              tokens const token, std::any const& data)
-            : filename_{filename}, linenumber_{linenumber},
+            : name_{name}, linenumber_{linenumber},
               token_{token}, data_{data}
         {}
 
-        std::string  filename_; // Name of file token comes from
+        std::string  name_;     // Name of file token comes from
         unsigned linenumber_;   // Line in file the token comes from
         tokens token_;          // Token
-        std::any data_;        // Token data
+        std::any data_;         // Token data
     };
 
     using token = basic_token<char>;

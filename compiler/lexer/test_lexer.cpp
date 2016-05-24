@@ -63,17 +63,26 @@ for (i : 1..10)
         std::unique_ptr<b::buffer> buffer = std::make_unique<b::string_buffer>(fib, "fib");
         l::tokenizer tokenizer(std::move(buffer));
 
-//        std::cout << "Starting tokenization...\n";
-//        for (;;)
-//        {
-//            auto& token = tokenizer.get();
-////            if (token == compiler::tokens::end)
-////                break;
-//            if (token.is<t::end>())
-//                break;
-//
-//
-//        }
+        std::cout << "Starting tokenization...\n";
+        for (;;)
+        {
+            auto token = tokenizer.get();
+            if (token == compiler::tokens::end)
+                break;
+
+            std::cout << "From " << token.name() << ':' << token.linenumber() << '\n';
+
+            switch (token.token())
+            {
+            case compiler::tokens::number:
+                std::cout << "    Number: " << std::any_cast<long long>(token.data()) << '\n';
+                break;
+
+            default:
+                std::cout << "    Unknown token: #" << static_cast<unsigned>(token.token()) << '\n';
+                break;
+            }
+        }
 
         std::cout << "Tokenization ended\n";
     }

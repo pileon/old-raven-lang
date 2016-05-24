@@ -1,9 +1,38 @@
 #ifndef RAVEN_LANG_LEXER_H
 #define RAVEN_LANG_LEXER_H
 
+#include "../../autoconf.h"
+
 #include <queue>
 #include <deque>
 #include <memory>
+
+#if defined(HAVE_HEADER_ANY)
+# include <any>
+#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
+# include <experimental/any>
+// Pulling in symbols into the std namespace like this is not really
+// allowed. It's done for forward compatibility with the C++17 standard
+namespace std
+{
+    using std::experimental::any;
+    using std::experimental::any_cast;
+    using std::experimental::bad_any_cast;
+}
+#elif defined(HAVE_HEADER_BOOST_ANY)
+# include <boost/any.hpp>
+// Pulling in symbols into the std namespace like this is not really
+// allowed. It's done for forward compatibility with the C++17 standard
+namespace std
+{
+    using boost::any;
+    using boost::any_cast;
+    using boost::bad_any_cast;
+}
+#else
+# error No any header available
+#endif
+
 #include "token.h"
 #include "buffer.h"
 
@@ -24,7 +53,7 @@ namespace compiler
 
             // Can only be created (explicitly) with a buffer
             explicit basic_tokenizer(std::unique_ptr<buffers::basic_buffer<charT>> buffer)
-                : buffers_{}, token_{}
+                : buffers_{}, linenumber_{1}
             {
                 buffers_.push(std::move(buffer));
             }
@@ -34,7 +63,7 @@ namespace compiler
              * \return The next foken from the buffer
              * \retval tokens::end No more tokens available
              */
-            basic_token<charT> const& get();
+            basic_token<charT> get();
 
             // Disallow copying
             basic_tokenizer(basic_tokenizer const&) = delete;
@@ -45,13 +74,13 @@ namespace compiler
 
         private:
             std::queue<std::unique_ptr<buffers::basic_buffer<charT>>> buffers_;
-            std::unique_ptr<basic_token<charT>> token_;     //!< Last token returned from get()
+            unsigned linenumber_;   // Current line number
 
-            template<typename tokenT, typename... argsT>
-            basic_token<charT> const& return_token(argsT&&... args)
+            basic_token<charT> const return_token(tokens const token,
+                                                  std::any const& data = std::any())
             {
-                token_ = std::make_unique<tokenT>(std::forward<argsT>(args)...);
-                return *token_;
+                std::string const& name = buffers_.front()->name();
+                return basic_token<charT>(name, linenumber_, token, data);
             }
 
             // Buffer convinience functions
@@ -82,7 +111,7 @@ namespace compiler
         using tokenizer = basic_tokenizer<char>;
 
         template<typename charT>
-        basic_token<charT> const& basic_tokenizer<charT>::get()
+        basic_token<charT> basic_tokenizer<charT>::get()
         {
             charT ch;
 
@@ -92,8 +121,8 @@ namespace compiler
                 while (!is_end(ch = next()) && ch != '\n' && std::isspace(ch))
                 {
                 }
-//                if (is_end(ch))
-//                    return return_token<tokens::end_<charT>>();
+                if (is_end(ch))
+                    return return_token(tokens::end);
 
                 // Check for comments
                 if (ch == '#')
@@ -109,8 +138,8 @@ namespace compiler
                     // TODO: skip_line() or skip_comment()
                 }
 
-//                // TODO: Dummy token return
-//                return return_token<tokens::basic_number<charT>>(0);
+                // TODO: Dummy token return
+                return return_token(tokens::number, 0ll);
             }
         }
     }
