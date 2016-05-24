@@ -110,6 +110,7 @@ namespace compiler
         // Other tokens
         newline,        //!< Statement separator, ignored elsewhere
         semicolon,      //!< Statement separator
+        identifier,     //!< Generic identifier
         end,            //!< End of the token-stream
 
         user_tokens = 1001  // Where user tokens begins

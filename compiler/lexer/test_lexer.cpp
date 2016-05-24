@@ -78,6 +78,31 @@ for (i : 1..10)
                 std::cout << "    Number: " << std::any_cast<std::int64_t>(token.data()) << '\n';
                 break;
 
+            case compiler::tokens ::identifier:
+                std::cout << "    Identifier: " << std::any_cast<std::string>(token.data()) << '\n';
+                break;
+
+            case compiler::tokens::k_var:
+            case compiler::tokens::k_const:
+            case compiler::tokens::k_return:
+            case compiler::tokens::k_if:
+            case compiler::tokens::k_else:
+            case compiler::tokens::k_while:
+            case compiler::tokens::k_do:
+            case compiler::tokens::k_for:
+            case compiler::tokens::k_break:
+            case compiler::tokens::k_continue:
+            case compiler::tokens::k_switch:
+            case compiler::tokens::k_case:
+            case compiler::tokens::k_use:
+            case compiler::tokens::k_function:
+            case compiler::tokens::k_class:
+            case compiler::tokens::k_private:
+            case compiler::tokens::k_public:
+            case compiler::tokens::k_object:
+                std::cout << "    Keyword: " << std::any_cast<std::string>(token.data()) << '\n';
+                break;
+
             case compiler::tokens::newline:
 
             default:

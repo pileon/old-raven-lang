@@ -402,14 +402,13 @@ Valid characters in identifier names are
     ABCDEFGHIJKLMNOPQRSTUVWXYZ
     abcdefghijklmnopqrstuvwxyz
     1234567890
-    §@$£¤?_
+    @$?_
 
 Identifiers may not start with a digit.
 
 When parsing identifier names the standard
-[`isalpha`](http://en.cppreference.com/w/cpp/string/byte/isalpha) and
 [`isalnum`](http://en.cppreference.com/w/cpp/string/byte/isalnum)
-functions are used, which may extend the valid letters depending on
+function is used, which may extend the valid letters depending on
 locale settings of the system. The "standard" 26 English letters will
 always be available.
 

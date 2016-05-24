@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cctype>
 #include <functional>
+#include <unordered_map>
 
 #if defined(HAVE_HEADER_ANY)
 # include <any>
@@ -115,9 +116,15 @@ namespace compiler
                 }
             }
 
+            bool isident(charT const ch) const
+            {
+                return (isalnum(ch) || ch == '_' || ch == '@' || ch == '$' || ch == '?');
+            }
+
             void get_comment();
 
             basic_token<charT> get_number(int const base);
+            basic_token<charT> get_identifier();
         };
 
         using tokenizer = basic_tokenizer<char>;
@@ -201,6 +208,11 @@ namespace compiler
                 }
 
                 // Check for keywords
+                if (isident(ch))
+                {
+                    unget();
+                    return get_identifier();
+                }
 
                 // Check for operators
 
@@ -278,6 +290,47 @@ namespace compiler
             unget();
 
             return return_token(tokens::number, value);
+        }
+
+        template<typename charT>
+        basic_token<charT> basic_tokenizer<charT>::get_identifier()
+        {
+            static std::unordered_map<std::string, tokens> const keywords = {
+                { "var"     , tokens::k_var      },
+                { "const"   , tokens::k_const    },
+                { "return"  , tokens::k_return   },
+                { "if"      , tokens::k_if       },
+                { "else"    , tokens::k_else     },
+                { "while"   , tokens::k_while    },
+                { "do"      , tokens::k_do       },
+                { "for"     , tokens::k_for      },
+                { "break"   , tokens::k_break    },
+                { "continue", tokens::k_continue },
+                { "switch"  , tokens::k_switch   },
+                { "case"    , tokens::k_case     },
+                { "use"     , tokens::k_use      },
+                { "function", tokens::k_function },
+                { "class"   , tokens::k_class    },
+                { "private" , tokens::k_private  },
+                { "public"  , tokens::k_public   },
+                { "object"  , tokens::k_object   },
+            };
+
+            charT ch;
+            std::basic_string<charT> id;
+
+            while (isident(ch = next()))
+                id += ch;
+
+            unget();
+
+            auto keyword = keywords.find(id);
+            if (keyword != keywords.end())
+                return return_token(keyword->second, id);
+
+            // TODO: Handle custom keywords
+
+            return return_token(tokens::identifier, id);
         }
     }
 }
