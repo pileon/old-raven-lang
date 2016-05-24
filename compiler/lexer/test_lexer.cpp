@@ -78,8 +78,12 @@ for (i : 1..10)
                 std::cout << "    Number: " << std::any_cast<std::int64_t>(token.data()) << '\n';
                 break;
 
-            case compiler::tokens ::identifier:
+            case compiler::tokens::identifier:
                 std::cout << "    Identifier: " << std::any_cast<std::string>(token.data()) << '\n';
+                break;
+
+            case compiler::tokens::string:
+                std::cout << "    String: \"" << std::any_cast<std::string>(token.data()) << "\"\n";
                 break;
 
             case compiler::tokens::k_var:

@@ -124,6 +124,7 @@ namespace compiler
             void get_comment();
 
             basic_token<charT> get_number(int const base);
+            basic_token<charT> get_string();
             basic_token<charT> get_identifier();
         };
 
@@ -205,6 +206,12 @@ namespace compiler
                         unget();
 
                     return get_number(base);
+                }
+
+                // Check for strings
+                if (ch == '"')
+                {
+                    return get_string();
                 }
 
                 // Check for keywords
@@ -290,6 +297,64 @@ namespace compiler
             unget();
 
             return return_token(tokens::number, value);
+        }
+
+        template<typename charT>
+        basic_token<charT> basic_tokenizer<charT>::get_string()
+        {
+            charT ch;
+            std::basic_string<charT> string;
+
+            while ((ch = next()) != buffers::basic_buffer<charT>::end &&
+                   ch != '"')
+            {
+                if (ch == '\\')
+                {
+                    ch = next();
+                    switch (ch)
+                    {
+                    case 'n':
+                        ch = '\n';
+                        break;
+                    case 'r':
+                        ch = '\r';
+                        break;
+                    case 't':
+                        ch = '\t';
+                        break;
+                    case 'a':
+                        ch = '\a';
+                        break;
+                    case 'b':
+                        ch = '\b';
+                        break;
+                    case '"':
+                        ch = '\"';
+                        break;
+                    case '%':
+                        ch = '%';
+                        break;
+                    case 'e':
+                        ch = 0x1b;  // Escape
+                        break;
+
+                        // TODO: Handle octal and hexadecimal escape sequences
+
+                    default:
+                        // TODO: Report error
+                        break;
+                    }
+                }
+
+                string += ch;
+            }
+
+            if (ch == buffers::basic_buffer<charT>::end)
+            {
+                // TODO: Report and return error
+            }
+
+            return return_token(tokens::string, string);
         }
 
         template<typename charT>
