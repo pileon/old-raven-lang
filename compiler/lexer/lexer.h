@@ -115,6 +115,8 @@ namespace compiler
                 }
             }
 
+            void get_comment();
+
             basic_token<charT> get_number(int const base);
         };
 
@@ -150,9 +152,22 @@ namespace compiler
 
                 if (ch == '/')
                 {
-                    // TODO: Check the next character, if it's a '/' then we have a line
-                    //       comment, if it's a '*' then we have a block comment
-                    // TODO: skip_line() or skip_comment()
+                    charT nch = next();
+                    if (nch == '/')
+                    {
+                        // C and C++ style line comments
+                        skip_line();
+                        continue;
+                    }
+
+                    if (nch == '*')
+                    {
+                        // C and C++ style block comments
+                        // TODO: Handle it
+                        continue;
+                    }
+
+                    unget();
                 }
 
                 // Check for numbers
@@ -191,6 +206,31 @@ namespace compiler
 
                 // TODO: Dummy token return
                 return return_token(tokens::number, static_cast<std::int64_t>(0));
+            }
+        }
+
+        template<typename charT>
+        void basic_tokenizer<charT>::get_comment()
+        {
+            charT ch;
+
+            while ((ch = next()) != buffers::basic_buffer<charT>::end)
+            {
+                if (ch == '\n')
+                    ++linenumber_;
+                else if (ch == '*')
+                {
+                    if (next() == '/')
+                        break;
+                    unget();
+                }
+                else if (ch == '/')
+                {
+                    if (next() == '*')
+                        get_comment();
+                    else
+                        unget();
+                }
             }
         }
 
