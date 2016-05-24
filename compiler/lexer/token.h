@@ -108,31 +108,69 @@ namespace compiler
         k_object,
 
         // Other tokens
-        newline   ,     //!< Statement separator, ignored elsewhere
+        newline,        //!< Statement separator, ignored elsewhere
         semicolon,      //!< Statement separator
         end,            //!< End of the token-stream
 
         user_tokens = 1001  // Where user tokens begins
     };
 
+    namespace lexer
+    {
+        // Forward declaration for friend declaration in token class
+        template<typename charT>
+        class basic_lexer;
+    }
+
     template<typename charT>
     class basic_token
     {
-    public:
-        ~basic_token()
-        {}
+        friend lexer::basic_lexer<charT>;
 
-        // Tokens can not be copied or moved
-        basic_token(basic_token const&) = delete;
-        basic_token(basic_token &&) = delete;
-        basic_token& operator=(basic_token const&) = delete;
-        basic_token& operator=(basic_token &&) = delete;
+    public:
+        basic_token() = delete;
+
+        basic_token(basic_token const&) = default;
+        basic_token(basic_token &&) = default;
+        basic_token& operator=(basic_token const&) = default;
+        basic_token& operator=(basic_token &&) = default;
+
+        bool operator==(tokens const token)
+        {
+            return token_ == token;
+        }
+
+        bool operator==(basic_token const& token)
+        {
+            return *this == token.token_;
+        }
+
+        bool operator!=(tokens const token)
+        {
+            return !(*this == token);
+        }
+
+        bool operator!=(basic_token const& token)
+        {
+            return !(*this == token);
+        }
+
+        std::any const& data() const
+        {
+            return data_;
+        }
 
     private:
-        std::string  filename_;     // Name of file token comes from
-        unsigned int linenumber_;   // Line in file the token comes from
-        std::any value;             // Token data
-        tokens token_;              // Token
+        explicit basic_token(std::string const& filename, unsigned linenumber,
+                             tokens const token, std::any const& data)
+            : filename_{filename}, linenumber_{linenumber},
+              token_{token}, data_{data}
+        {}
+
+        std::string  filename_; // Name of file token comes from
+        unsigned linenumber_;   // Line in file the token comes from
+        tokens token_;          // Token
+        std::any data_;        // Token data
     };
 
     using token = basic_token<char>;
