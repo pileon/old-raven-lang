@@ -10,7 +10,7 @@
 
 namespace l = compiler::lexer;
 namespace b = l::buffers;
-namespace t = compiler::tokens;
+// namespace t = compiler::tokens;
 
 namespace
 {
