@@ -45,7 +45,9 @@ namespace compiler
         assignment_multiply,        //!< `*=`
         assignment_divide,          //!< `/=`
         assignment_modulo,          //!< `%=`
+        assignment_bit_complement,  //!< `~=`
         assignment_bit_or,          //!< `|=`
+        assignment_bit_xor,         //!< `^=`
         assignment_bit_and,         //!< `&=`
         assignment_bit_shift_left,  //!< `<<=`
         assignment_bit_shift_right, //!< `>>=`
@@ -81,8 +83,7 @@ namespace compiler
         slash,                      //!< `/`
         pipe,                       //!< `|`
         tilde,                      //!< `~`
-        range,                      //!< `...`
-        assignment_bit_xor,         //!< `^=`
+        range,                      //!< `..`
 
         // Keyword tokens
         // Note that these are prefixed with a `k_` because some keywords
@@ -112,6 +113,8 @@ namespace compiler
         semicolon,      //!< Statement separator
         identifier,     //!< Generic identifier
         end,            //!< End of the token-stream
+
+        error = 999,    //!< A syntax error, and unrecognized token
 
         user_tokens = 1001  // Where user tokens begins
     };

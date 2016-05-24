@@ -186,7 +186,7 @@ scheme, etc.
         
     range_expr
         : add_sub_expr
-        | add_sub_expr "..." add_sub_expr
+        | add_sub_expr ".." add_sub_expr
         ;
         
     add_sub_expr
@@ -349,7 +349,8 @@ Constant string literals might contain embedded expressions. They start
 with a percentage (`%`) and the expression is enclosed in curly-braces
 (`{}`). Embedded expressions are evaluated lazily, when the constant
 string literal is used and not at the time of compilation. Expressions
-must be valid or a run-time error will be thrown.
+must be valid or a run-time error will be thrown. Embedded expressions
+can not be nested or contain block-statements.
 
 There is no limit on the length of strings, or the number of embedded
 expressions.

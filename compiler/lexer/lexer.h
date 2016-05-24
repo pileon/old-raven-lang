@@ -126,6 +126,7 @@ namespace compiler
             basic_token<charT> get_number(int const base);
             basic_token<charT> get_string();
             basic_token<charT> get_identifier();
+            basic_token<charT> get_operator();
         };
 
         using tokenizer = basic_tokenizer<char>;
@@ -222,9 +223,8 @@ namespace compiler
                 }
 
                 // Check for operators
-
-                // TODO: Dummy token return
-                return return_token(tokens::number, static_cast<std::int64_t>(0));
+                unget();
+                return get_operator();
             }
         }
 
@@ -396,6 +396,185 @@ namespace compiler
             // TODO: Handle custom keywords
 
             return return_token(tokens::identifier, id);
+        }
+
+        template<typename charT>
+        basic_token<charT> basic_tokenizer<charT>::get_operator()
+        {
+            charT ch = next();
+            std::basic_string<charT> op{ ch };
+
+            auto rt = [this, &op](tokens const t) -> basic_token<charT> {
+                return return_token(t, op);
+            };
+
+            switch (ch)
+            {
+            case '<':
+                ch = next();
+                if (ch == '<')
+                {
+                    op += ch;
+                    ch = next();
+                    if (ch == '=')
+                    {
+                        op += ch;
+                        return rt(tokens::assignment_bit_shift_left);
+                    }
+                    unget();
+                    return rt(tokens::bit_shift_left);
+                }
+                unget();
+                return rt(tokens::less_than);
+            case '>':
+                ch = next();
+                if (ch == '>')
+                {
+                    op += ch;
+                    ch = next();
+                    if (ch == '=')
+                    {
+                        op += ch;
+                        return rt(tokens::assignment_bit_shift_right);
+                    }
+                    unget();
+                    return rt(tokens::bit_shift_right);
+                }
+                unget();
+                return rt(tokens::greater_than);
+            case '|':
+                ch = next();
+                if (ch == '|')
+                {
+                    op += ch;
+                    return rt(tokens::logical_or);
+                }
+                else if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_bit_or);
+                }
+                unget();
+                return rt(tokens::pipe);
+            case ',':
+                return rt(tokens::comma);
+            case ';':
+                return rt(tokens::semicolon);
+            case '.':
+                ch = next();
+                if (ch == '.')
+                {
+                    op += ch;
+                    return rt(tokens::range);
+                }
+                unget();
+                return rt(tokens::dot);
+            case ':':
+                return rt(tokens::colon);
+            case '-':
+                return rt(tokens::minus);
+            case '!':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::not_equal);
+                }
+                unget();
+                return rt(tokens::logical_not);
+            case '%':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_modulo);
+                }
+                unget();
+                return rt(tokens::percent);
+            case '&':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_modulo);
+                }
+                unget();
+                return rt(tokens::percent);
+            case '/':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_divide);
+                }
+                unget();
+                return rt(tokens::slash);
+            case '{':
+                return rt(tokens::left_curly_brace);
+            case '(':
+                return rt(tokens::left_parenthesis);
+            case '[':
+                return rt(tokens::left_square_brace);
+            case ']':
+                return rt(tokens::right_square_brace);
+            case ')':
+                return rt(tokens::right_parenthesis);
+            case '}':
+                return rt(tokens::right_curly_brace);
+            case '=':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::equal);
+                }
+                unget();
+                return rt(tokens::assignment);
+            case '+':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_add);
+                }
+                unget();
+                return rt(tokens::plus);
+            case '^':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_bit_xor);
+                }
+                unget();
+                return rt(tokens::bit_xor);
+            case '~':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_bit_complement);
+                }
+                unget();
+                return rt(tokens::tilde);
+            case '*':
+                ch = next();
+                if (ch == '=')
+                {
+                    op += ch;
+                    return rt(tokens::assignment_multiply);
+                }
+                else if (ch == '*')
+                {
+                    op += ch;
+                    return rt(tokens::exponent);
+                }
+                unget();
+                return rt(tokens::star);
+
+            default:
+                return rt(tokens::error);
+            }
         }
     }
 }

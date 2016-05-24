@@ -70,20 +70,23 @@ for (i : 1..10)
             if (token == compiler::tokens::end)
                 break;
 
-            std::cout << "From " << token.name() << ':' << token.linenumber() << '\n';
+            if (token == compiler::tokens::newline)
+                continue;
+
+            std::cout << token.name() << ':' << token.linenumber() << ':';
 
             switch (token.token())
             {
             case compiler::tokens::number:
-                std::cout << "    Number: " << std::any_cast<std::int64_t>(token.data()) << '\n';
+                std::cout << " Number: " << std::any_cast<std::int64_t>(token.data()) << '\n';
                 break;
 
             case compiler::tokens::identifier:
-                std::cout << "    Identifier: " << std::any_cast<std::string>(token.data()) << '\n';
+                std::cout << " Identifier: " << std::any_cast<std::string>(token.data()) << '\n';
                 break;
 
             case compiler::tokens::string:
-                std::cout << "    String: \"" << std::any_cast<std::string>(token.data()) << "\"\n";
+                std::cout << " String: \"" << std::any_cast<std::string>(token.data()) << "\"\n";
                 break;
 
             case compiler::tokens::k_var:
@@ -104,13 +107,70 @@ for (i : 1..10)
             case compiler::tokens::k_private:
             case compiler::tokens::k_public:
             case compiler::tokens::k_object:
-                std::cout << "    Keyword: " << std::any_cast<std::string>(token.data()) << '\n';
+                std::cout << " Keyword: " << std::any_cast<std::string>(token.data()) << '\n';
+                break;
+
+            case compiler::tokens::assignment:
+            case compiler::tokens::assignment_add:
+            case compiler::tokens::assignment_subtract:
+            case compiler::tokens::assignment_multiply:
+            case compiler::tokens::assignment_divide:
+            case compiler::tokens::assignment_modulo:
+            case compiler::tokens::assignment_bit_complement:
+            case compiler::tokens::assignment_bit_or:
+            case compiler::tokens::assignment_bit_xor:
+            case compiler::tokens::assignment_bit_and:
+            case compiler::tokens::assignment_bit_shift_left:
+            case compiler::tokens::assignment_bit_shift_right:
+            case compiler::tokens::left_parenthesis:
+            case compiler::tokens::right_parenthesis:
+            case compiler::tokens::left_square_brace:
+            case compiler::tokens::right_square_brace:
+            case compiler::tokens::left_curly_brace:
+            case compiler::tokens::right_curly_brace:
+            case compiler::tokens::dot:
+            case compiler::tokens::comma:
+            case compiler::tokens::colon:
+            case compiler::tokens::bit_xor:
+            case compiler::tokens::bit_and:
+            case compiler::tokens::bit_shift_left:
+            case compiler::tokens::bit_shift_right:
+            case compiler::tokens::logical_or:
+            case compiler::tokens::logical_and:
+            case compiler::tokens::logical_not:
+            case compiler::tokens::equal:
+            case compiler::tokens::not_equal:
+            case compiler::tokens::equal_less_than:
+            case compiler::tokens::equal_greater_than:
+            case compiler::tokens::less_than:
+            case compiler::tokens::greater_than:
+            case compiler::tokens::approx_equal:
+            case compiler::tokens::approx_notequal:
+            case compiler::tokens::plus:
+            case compiler::tokens::minus:
+            case compiler::tokens::star:
+            case compiler::tokens::percent:
+            case compiler::tokens::exponent:
+            case compiler::tokens::slash:
+            case compiler::tokens::pipe:
+            case compiler::tokens::tilde:
+            case compiler::tokens::range:
+                std::cout << " Operator: " <<  std::any_cast<std::string>(token.data()) << '\n';
                 break;
 
             case compiler::tokens::newline:
+                break;
+
+            case compiler::tokens::semicolon:
+                std::cout << " ;\n";
+                break;
+
+            case compiler::tokens::error:
+                std::cout << " Error: \"" <<  std::any_cast<std::string>(token.data()) << "\"\n";
+                break;
 
             default:
-                std::cout << "    Unknown token: #" << static_cast<unsigned>(token.token()) << '\n';
+                std::cout << " Unknown token: #" << static_cast<unsigned>(token.token()) << '\n';
                 break;
             }
         }
