@@ -170,7 +170,7 @@ namespace compiler
 
                 void unget()
                 {
-                    if (current_ != string_.begin())
+                    if (current_ != string_.begin() && current_ != string_.end())
                         --current_;
                 }
 
