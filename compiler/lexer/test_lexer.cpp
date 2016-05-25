@@ -10,7 +10,6 @@
 
 namespace l = compiler::lexer;
 namespace b = l::buffers;
-// namespace t = compiler::tokens;
 
 namespace
 {
@@ -44,23 +43,9 @@ namespace
         }
     }
 
-    void test_tokenizer()
+    void tokenize(std::string const& input, std::string const& name)
     {
-        std::string fib = R"(# Recursively calculate a Fibonacci number
-var fib = function(n)
-{
-    if (n == 0 || n == 1)
-        return n;
-
-    return fib(n - 1) + fib(n - 2);
-}
-
-# Print the first ten Fibonacci numbers
-for (i : 1..10)
-    print("Fibbonacci for %{i} is %{fib(i)}\n");
-)";
-
-        std::unique_ptr<b::buffer> buffer = std::make_unique<b::string_buffer>(fib, "fib");
+        std::unique_ptr<b::buffer> buffer = std::make_unique<b::string_buffer>(input, name);
         l::tokenizer tokenizer(std::move(buffer));
 
         std::cout << "Starting tokenization...\n";
@@ -176,6 +161,27 @@ for (i : 1..10)
         }
 
         std::cout << "Tokenization ended\n";
+    }
+
+    void test_tokenizer()
+    {
+        std::string fib = R"(# Recursively calculate a Fibonacci number
+var fib = function(n)
+{
+    if (n == 0 || n == 1)
+        return n;
+
+    return fib(n - 1) + fib(n - 2);
+}
+
+# Print the first ten Fibonacci numbers
+for (i : 1..10)
+    print("Fibbonacci for %{i} is %{fib(i)}\n");
+)";
+
+//        tokenize(fib, "fib");
+
+        tokenize("123 0b101 0123 0x123", "numbers");
     }
 }
 
