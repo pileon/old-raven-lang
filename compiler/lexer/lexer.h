@@ -8,8 +8,10 @@
 #include <memory>
 #include <cstdint>
 #include <cctype>
+#include <cstdlib>
 #include <functional>
 #include <unordered_map>
+#include <array>
 
 #if defined(HAVE_HEADER_ANY)
 # include <any>
@@ -44,6 +46,55 @@ namespace compiler
 {
     namespace lexer
     {
+        template<typename charO, typename charI>
+        static charO T(charI const&);
+
+        template<>
+        constexpr char T<char, char>(char const& ch)
+        {
+            return ch;
+        };
+
+        template<>
+        constexpr wchar_t T<wchar_t, wchar_t >(wchar_t const& ch)
+        {
+            return ch;
+        };
+
+//        template<>
+//        wchar_t T<wchar_t, char>(char const& ch)
+//        {
+//            wchar_t out;
+//            if (std::mbtowc(&out, &ch, 1) == -1)
+//            {
+//                throw "mbtowc error";
+//                // TODO: Throw proper error
+//            }
+//            return out;
+//        };
+
+//        // TODO: Implement this
+//        template<>
+//        char T<char, wchar_t>(wchar_t const& ch);
+
+        template<typename charO, typename charI>
+        std::basic_string<charO> T(charI const*);
+
+        template<>
+        std::basic_string<char> T<char, char>(char const* s)
+        {
+            return s;
+        };
+
+        template<>
+        std::basic_string<wchar_t> T<wchar_t, wchar_t>(wchar_t const* s)
+        {
+            return s;
+        };
+
+        // TODO: T string function for char -> wchar_t
+        // TODO: T string function for wchar_t -> char
+
         /**
          * \brief Lexical tokenizer class
          */
@@ -111,14 +162,102 @@ namespace compiler
             void skip_line()
             {
                 charT ch;
-                while (!is_end(ch = next()) && ch != '\n')
+                while (!is_end(ch = next()) && ch != T<charT>('\n'))
                 {
                 }
             }
 
-            bool isident(charT const ch) const
+            static constexpr bool is_alpha(charT const& ch)
             {
-                return (isalnum(ch) || ch == '_' || ch == '@' || ch == '$' || ch == '?');
+                std::array<charT, 52> const letters = {{
+                    T<charT>('a'), T<charT>('A'),
+                    T<charT>('b'), T<charT>('B'),
+                    T<charT>('c'), T<charT>('C'),
+                    T<charT>('d'), T<charT>('D'),
+                    T<charT>('e'), T<charT>('E'),
+                    T<charT>('f'), T<charT>('F'),
+                    T<charT>('g'), T<charT>('G'),
+                    T<charT>('h'), T<charT>('H'),
+                    T<charT>('i'), T<charT>('I'),
+                    T<charT>('j'), T<charT>('J'),
+                    T<charT>('k'), T<charT>('K'),
+                    T<charT>('l'), T<charT>('L'),
+                    T<charT>('m'), T<charT>('M'),
+                    T<charT>('n'), T<charT>('N'),
+                    T<charT>('o'), T<charT>('O'),
+                    T<charT>('p'), T<charT>('P'),
+                    T<charT>('q'), T<charT>('Q'),
+                    T<charT>('r'), T<charT>('R'),
+                    T<charT>('s'), T<charT>('S'),
+                    T<charT>('t'), T<charT>('T'),
+                    T<charT>('u'), T<charT>('U'),
+                    T<charT>('v'), T<charT>('V'),
+                    T<charT>('w'), T<charT>('W'),
+                    T<charT>('x'), T<charT>('X'),
+                    T<charT>('y'), T<charT>('Y'),
+                    T<charT>('z'), T<charT>('Z')
+                }};
+
+                return std::find(letters.begin(), letters.end(), ch) != letters.end();
+            }
+
+            static constexpr bool is_digit(charT const& ch)
+            {
+                std::array<charT, 10> const digits = {{
+                    T<charT>('0'),
+                    T<charT>('1'),
+                    T<charT>('2'),
+                    T<charT>('3'),
+                    T<charT>('4'),
+                    T<charT>('5'),
+                    T<charT>('6'),
+                    T<charT>('7'),
+                    T<charT>('8'),
+                    T<charT>('9'),
+                }};
+
+                return std::find(digits.begin(), digits.end(), ch) != digits.end();
+            }
+
+            static constexpr bool is_xdigit(charT const& ch)
+            {
+                std::array<charT, 52> const letters = {{
+                    T<charT>('a'), T<charT>('A'),
+                    T<charT>('b'), T<charT>('B'),
+                    T<charT>('c'), T<charT>('C'),
+                    T<charT>('d'), T<charT>('D'),
+                    T<charT>('e'), T<charT>('E'),
+                    T<charT>('f'), T<charT>('F')
+                }};
+
+                return is_digit(ch) || std::find(letters.begin(), letters.end(), ch) != letters.end();
+            }
+
+            static constexpr bool is_alnum(charT const& ch)
+            {
+                return is_alpha(ch) || is_digit(ch);
+            }
+
+            static constexpr bool is_ident(charT const& ch)
+            {
+                return (is_alnum(ch) ||
+                        ch == T<charT>('_') ||
+                        ch == T<charT>('@') ||
+                        ch == T<charT>('$') ||
+                        ch == T<charT>('?'));
+            }
+
+            static constexpr bool is_space(charT const& ch)
+            {
+                std::array<charT, 5> const spaces = {{
+                    T<charT>(' '),
+                    T<charT>('\n'),
+                    T<charT>('\r'),
+                    T<charT>('\t'),
+                    T<charT>('\v'),
+                }};
+
+                return std::find(spaces.begin(), spaces.end(), ch) != spaces.end();
             }
 
             void get_comment();
@@ -139,40 +278,40 @@ namespace compiler
             for (;;)
             {
                 // First skip leading white-space, but not newlines
-                while (!is_end(ch = next()) && ch != '\n' && std::isspace(ch))
+                while (!is_end(ch = next()) && ch != T<charT>('\n') && is_space(ch))
                 {
                 }
                 if (is_end(ch))
                     return return_token(tokens::end);
 
                 // Check for newlines, used as statement separator
-                if (ch == '\n')
+                if (ch == T<charT>('\n'))
                 {
                     ++linenumber_;
                     return return_token(tokens::newline);
                 }
 
                 // Check for comments
-                if (ch == '#')
+                if (ch == T<charT>('#'))
                 {
                     skip_line();
                     continue;  // Continue to try next token
                 }
 
-                if (ch == '/')
+                if (ch == T<charT>('/'))
                 {
                     charT nch = next();
-                    if (nch == '/')
+                    if (nch == T<charT>('/'))
                     {
                         // C and C++ style line comments
                         skip_line();
                         continue;
                     }
 
-                    if (nch == '*')
+                    if (nch == T<charT>('*'))
                     {
                         // C and C++ style block comments
-                        // TODO: Handle it
+                        get_comment();
                         continue;
                     }
 
@@ -180,20 +319,20 @@ namespace compiler
                 }
 
                 // Check for numbers
-                if (std::isdigit(ch))
+                if (is_digit(ch))
                 {
                     int base = 10;
 
-                    if (ch == '0')
+                    if (ch == T<charT>('0'))
                     {
                         charT nch = next();
-                        if (nch == 'x' || nch == 'X')
+                        if (nch == T<charT>('x') || nch == T<charT>('X'))
                             base = 16;
-                        else if (nch == 'o' || nch == 'O')
+                        else if (nch == T<charT>('o') || nch == T<charT>('O'))
                             base = 8;
-                        else if (nch == 'b' || nch == 'B')
+                        else if (nch == T<charT>('b') || nch == T<charT>('B'))
                             base = 2;
-                        else if (isdigit(nch))
+                        else if (is_digit(nch))
                         {
                             // C and C++ compatibility
                             unget();
@@ -210,13 +349,13 @@ namespace compiler
                 }
 
                 // Check for strings
-                if (ch == '"')
+                if (ch == T<charT>('"'))
                 {
                     return get_string();
                 }
 
                 // Check for keywords
-                if (isident(ch))
+                if (is_ident(ch))
                 {
                     unget();
                     return get_identifier();
@@ -235,17 +374,17 @@ namespace compiler
 
             while ((ch = next()) != buffers::basic_buffer<charT>::end)
             {
-                if (ch == '\n')
+                if (ch == T<charT>('\n'))
                     ++linenumber_;
-                else if (ch == '*')
+                else if (ch == T<charT>('*'))
                 {
-                    if (next() == '/')
+                    if (next() == T<charT>('/'))
                         break;
                     unget();
                 }
-                else if (ch == '/')
+                else if (ch == T<charT>('/'))
                 {
-                    if (next() == '*')
+                    if (next() == T<charT>('*'))
                         get_comment();
                     else
                         unget();
@@ -256,28 +395,28 @@ namespace compiler
         template<typename charT>
         basic_token<charT> basic_tokenizer<charT>::get_number(int const base)
         {
-            std::function<int(int const)> isdigit;
-            std::function<int(int const)> tonumber;
+            std::function<bool(charT const&)> isdigit;
+            std::function<int(charT const&)> tonumber;
 
-            auto dtonum = [](int const ch) -> int { return ch - '0'; };
+            auto dtonum = [](charT const& ch) -> int { return ch - T<charT>('0'); };
 
             switch (base)
             {
             case 2:
-                isdigit  = [](int const ch) -> int { return ch == '0' || ch == '1'; };
+                isdigit  = [](charT const& ch) -> bool { return ch == T<charT>('0') || ch == T<charT>('1'); };
                 tonumber = dtonum;
                 break;
             case 8:
-                isdigit  = [](int const ch) -> int { return std::isdigit(ch) && ch != '8' && ch != '9'; };
+                isdigit  = [](charT const& ch) -> bool { return std::isdigit(ch) && ch != T<charT>('8') && ch != T<charT>('9'); };
                 tonumber = dtonum;
                 break;
             case 10:
-                isdigit  = std::bind(&::isdigit, std::placeholders::_1);
+                isdigit  = std::bind(is_digit, std::placeholders::_1);
                 tonumber = dtonum;
                 break;
             case 16:
-                isdigit  = std::bind(&::isxdigit, std::placeholders::_1);
-                tonumber = [dtonum](int const ch) -> int { return (::isdigit(ch) ? dtonum(ch) : ::tolower(ch) - 'a'); };
+                isdigit  = std::bind(is_xdigit, std::placeholders::_1);
+                tonumber = [dtonum](charT const& ch) -> int { return (is_digit(ch) ? dtonum(ch) : ::tolower(ch) - T<charT>('a')); };
                 break;
 
             default:
@@ -306,35 +445,35 @@ namespace compiler
             std::basic_string<charT> string;
 
             while ((ch = next()) != buffers::basic_buffer<charT>::end &&
-                   ch != '"')
+                   ch != T<charT>('"'))
             {
-                if (ch == '\\')
+                if (ch == T<charT>('\\'))
                 {
                     ch = next();
                     switch (ch)
                     {
-                    case 'n':
-                        ch = '\n';
+                    case T<charT>('n'):
+                        ch = T<charT>('\n');
                         break;
-                    case 'r':
-                        ch = '\r';
+                    case T<charT>('r'):
+                        ch = T<charT>('\r');
                         break;
-                    case 't':
-                        ch = '\t';
+                    case T<charT>('t'):
+                        ch = T<charT>('\t');
                         break;
-                    case 'a':
-                        ch = '\a';
+                    case T<charT>('a'):
+                        ch = T<charT>('\a');
                         break;
-                    case 'b':
-                        ch = '\b';
+                    case T<charT>('b'):
+                        ch = T<charT>('\b');
                         break;
-                    case '"':
-                        ch = '\"';
+                    case T<charT>('"'):
+                        ch = T<charT>('\"');
                         break;
-                    case '%':
-                        ch = '%';
+                    case T<charT>('%'):
+                        ch = T<charT>('%');
                         break;
-                    case 'e':
+                    case T<charT>('e'):
                         ch = 0x1b;  // Escape
                         break;
 
@@ -360,31 +499,34 @@ namespace compiler
         template<typename charT>
         basic_token<charT> basic_tokenizer<charT>::get_identifier()
         {
-            static std::unordered_map<std::string, tokens> const keywords = {
-                { "var"     , tokens::k_var      },
-                { "const"   , tokens::k_const    },
-                { "return"  , tokens::k_return   },
-                { "if"      , tokens::k_if       },
-                { "else"    , tokens::k_else     },
-                { "while"   , tokens::k_while    },
-                { "do"      , tokens::k_do       },
-                { "for"     , tokens::k_for      },
-                { "break"   , tokens::k_break    },
-                { "continue", tokens::k_continue },
-                { "switch"  , tokens::k_switch   },
-                { "case"    , tokens::k_case     },
-                { "use"     , tokens::k_use      },
-                { "function", tokens::k_function },
-                { "class"   , tokens::k_class    },
-                { "private" , tokens::k_private  },
-                { "public"  , tokens::k_public   },
-                { "object"  , tokens::k_object   },
-            };
+            static std::unordered_map<std::basic_string<charT>, tokens> keywords;
+
+            if (keywords.empty())
+            {
+                keywords.emplace(T<charT>("var")     , tokens::k_var      );
+                keywords.emplace(T<charT>("const")   , tokens::k_const    );
+                keywords.emplace(T<charT>("return")  , tokens::k_return   );
+                keywords.emplace(T<charT>("if")      , tokens::k_if       );
+                keywords.emplace(T<charT>("else")    , tokens::k_else     );
+                keywords.emplace(T<charT>("while")   , tokens::k_while    );
+                keywords.emplace(T<charT>("do")      , tokens::k_do       );
+                keywords.emplace(T<charT>("for")     , tokens::k_for      );
+                keywords.emplace(T<charT>("break")   , tokens::k_break    );
+                keywords.emplace(T<charT>("continue"), tokens::k_continue );
+                keywords.emplace(T<charT>("switch")  , tokens::k_switch   );
+                keywords.emplace(T<charT>("case")    , tokens::k_case     );
+                keywords.emplace(T<charT>("use")     , tokens::k_use      );
+                keywords.emplace(T<charT>("function"), tokens::k_function );
+                keywords.emplace(T<charT>("class")   , tokens::k_class    );
+                keywords.emplace(T<charT>("private") , tokens::k_private  );
+                keywords.emplace(T<charT>("public")  , tokens::k_public   );
+                keywords.emplace(T<charT>("object")  , tokens::k_object   );
+            }
 
             charT ch;
             std::basic_string<charT> id;
 
-            while (isident(ch = next()))
+            while (is_ident(ch = next()))
                 id += ch;
 
             unget();
@@ -410,13 +552,13 @@ namespace compiler
 
             switch (ch)
             {
-            case '<':
+            case T<charT>('<'):
                 ch = next();
-                if (ch == '<')
+                if (ch == T<charT>('<'))
                 {
                     op += ch;
                     ch = next();
-                    if (ch == '=')
+                    if (ch == T<charT>('='))
                     {
                         op += ch;
                         return rt(tokens::assignment_bit_shift_left);
@@ -426,13 +568,13 @@ namespace compiler
                 }
                 unget();
                 return rt(tokens::less_than);
-            case '>':
+            case T<charT>('>'):
                 ch = next();
-                if (ch == '>')
+                if (ch == T<charT>('>'))
                 {
                     op += ch;
                     ch = next();
-                    if (ch == '=')
+                    if (ch == T<charT>('='))
                     {
                         op += ch;
                         return rt(tokens::assignment_bit_shift_right);
@@ -442,129 +584,129 @@ namespace compiler
                 }
                 unget();
                 return rt(tokens::greater_than);
-            case '|':
+            case T<charT>('|'):
                 ch = next();
-                if (ch == '|')
+                if (ch == T<charT>('|'))
                 {
                     op += ch;
                     return rt(tokens::logical_or);
                 }
-                else if (ch == '=')
+                else if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_bit_or);
                 }
                 unget();
                 return rt(tokens::pipe);
-            case ',':
+            case T<charT>(','):
                 return rt(tokens::comma);
-            case ';':
+            case T<charT>(';'):
                 return rt(tokens::semicolon);
-            case '.':
+            case T<charT>('.'):
                 ch = next();
-                if (ch == '.')
+                if (ch == T<charT>('.'))
                 {
                     op += ch;
                     return rt(tokens::range);
                 }
                 unget();
                 return rt(tokens::dot);
-            case ':':
+            case T<charT>(':'):
                 return rt(tokens::colon);
-            case '-':
+            case T<charT>('-'):
                 return rt(tokens::minus);
-            case '!':
+            case T<charT>('!'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::not_equal);
                 }
                 unget();
                 return rt(tokens::logical_not);
-            case '%':
+            case T<charT>('%'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_modulo);
                 }
                 unget();
                 return rt(tokens::percent);
-            case '&':
+            case T<charT>('&'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_modulo);
                 }
                 unget();
                 return rt(tokens::percent);
-            case '/':
+            case T<charT>('/'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_divide);
                 }
                 unget();
                 return rt(tokens::slash);
-            case '{':
+            case T<charT>('{'):
                 return rt(tokens::left_curly_brace);
-            case '(':
+            case T<charT>('('):
                 return rt(tokens::left_parenthesis);
-            case '[':
+            case T<charT>('['):
                 return rt(tokens::left_square_brace);
-            case ']':
+            case T<charT>(']'):
                 return rt(tokens::right_square_brace);
-            case ')':
+            case T<charT>(')'):
                 return rt(tokens::right_parenthesis);
-            case '}':
+            case T<charT>('}'):
                 return rt(tokens::right_curly_brace);
-            case '=':
+            case T<charT>('='):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::equal);
                 }
                 unget();
                 return rt(tokens::assignment);
-            case '+':
+            case T<charT>('+'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_add);
                 }
                 unget();
                 return rt(tokens::plus);
-            case '^':
+            case T<charT>('^'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_bit_xor);
                 }
                 unget();
                 return rt(tokens::bit_xor);
-            case '~':
+            case T<charT>('~'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_bit_complement);
                 }
                 unget();
                 return rt(tokens::tilde);
-            case '*':
+            case T<charT>('*'):
                 ch = next();
-                if (ch == '=')
+                if (ch == T<charT>('='))
                 {
                     op += ch;
                     return rt(tokens::assignment_multiply);
                 }
-                else if (ch == '*')
+                else if (ch == T<charT>('*'))
                 {
                     op += ch;
                     return rt(tokens::exponent);

@@ -179,7 +179,7 @@ for (i : 1..10)
     print("Fibbonacci for %{i} is %{fib(i)}\n");
 )";
 
-//        tokenize(fib, "fib");
+        tokenize(fib, "fib");
 
         tokenize("123 0b101 0123 0x123", "numbers");
     }
