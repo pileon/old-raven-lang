@@ -290,7 +290,7 @@ namespace compiler
 
             while (isdigit(ch = next()))
             {
-                value = value * 10 + tonumber(ch);
+                value = value * base + tonumber(ch);
             }
 
             // Last character was not a digit, put it back
