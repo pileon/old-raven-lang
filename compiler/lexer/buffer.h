@@ -7,6 +7,11 @@ namespace compiler
 {
     namespace lexer
     {
+        /**
+         * \brief Classes for buffering
+         *
+         * Used by the lexical tonekizer.
+         */
         namespace buffers
         {
             /**
@@ -155,6 +160,10 @@ namespace compiler
                 {
                 }
 
+                /**
+                 * \brief Set the buffer to a specific string
+                 * @param string The string to use as buffer
+                 */
                 void set(std::basic_string<charT> const& string)
                 {
                     string_  = string;
@@ -229,7 +238,23 @@ namespace compiler
                  * \retval true If the file-buffer is opened
                  * \retval false If the file-buffer is not opened
                  */
-                virtual bool is_open() = 0;
+                virtual bool is_open() const
+                {
+                    return is_open_;
+                }
+
+            protected:
+                /**
+                 * \brief Set the open-status of the file
+                 * \param status The new status of the file
+                 */
+                void set_open(bool const status)
+                {
+                    is_open_= status;
+                }
+
+            private:
+                bool is_open_;  //!< Status of the file
             };
 
             using file_buffer = basic_file_buffer<char>;

@@ -3,7 +3,7 @@
 
 #include "../../autoconf.h"
 
-#include <queue>
+#include <stack>
 #include <deque>
 #include <memory>
 #include <cstdint>
@@ -44,6 +44,9 @@ namespace std
 
 namespace compiler
 {
+    /**
+     * \brief Contains the lexical tokenizer and related functionality
+     */
     namespace lexer
     {
         template<typename charO, typename charI>
@@ -128,30 +131,30 @@ namespace compiler
             basic_tokenizer& operator=(basic_tokenizer&&) = default;
 
         private:
-            std::queue<std::unique_ptr<buffers::basic_buffer<charT>>> buffers_;
+            std::stack<std::unique_ptr<buffers::basic_buffer<charT>>> buffers_;
             unsigned linenumber_;   // Current line number
 
             basic_token<charT> const return_token(tokens const token,
                                                   std::any const& data = std::any())
             {
-                std::string const& name = buffers_.front()->name();
+                std::string const& name = buffers_.top()->name();
                 return basic_token<charT>(name, linenumber_, token, data);
             }
 
-            // Buffer convinience functions
+            // Buffer convenience functions
             charT next()
             {
-                return buffers_.front()->get();
+                return buffers_.top()->get();
             }
 
             void unget()
             {
-                return buffers_.front()->unget();
+                return buffers_.top()->unget();
             }
 
             charT peek() const
             {
-                return buffers_.front()->peek();
+                return buffers_.top()->peek();
             }
 
             bool is_end(charT const ch) const
@@ -268,11 +271,20 @@ namespace compiler
             basic_token<charT> get_operator();
         };
 
+        /**
+         * \brief Tokenizer type for basic `char` type
+         */
         using tokenizer = basic_tokenizer<char>;
 
         template<typename charT>
         basic_token<charT> basic_tokenizer<charT>::get()
         {
+            if (buffers_.empty())
+            {
+                // TODO: Throw an error? Return an error?
+                return return_token(tokens::end);
+            }
+
             charT ch;
 
             for (;;)
@@ -449,32 +461,49 @@ namespace compiler
             {
                 if (ch == T<charT>('\\'))
                 {
+                    // TODO: Break out into separate function?
+
                     ch = next();
                     switch (ch)
                     {
+                        // Newline
                     case T<charT>('n'):
                         ch = T<charT>('\n');
                         break;
+
+                        // Carriage return
                     case T<charT>('r'):
                         ch = T<charT>('\r');
                         break;
+
+                        // Tab
                     case T<charT>('t'):
                         ch = T<charT>('\t');
                         break;
+
+                        // Alert (also known as "bell" or similar)
                     case T<charT>('a'):
                         ch = T<charT>('\a');
                         break;
+
+                        // Backspace
                     case T<charT>('b'):
                         ch = T<charT>('\b');
                         break;
+
+                        // Double quote
                     case T<charT>('"'):
                         ch = T<charT>('\"');
                         break;
+
+                        // Actual percentage character
                     case T<charT>('%'):
                         ch = T<charT>('%');
                         break;
+
+                        // Escape
                     case T<charT>('e'):
-                        ch = 0x1b;  // Escape
+                        ch = 0x1b;
                         break;
 
                         // TODO: Handle octal and hexadecimal escape sequences
@@ -521,6 +550,8 @@ namespace compiler
                 keywords.emplace(T<charT>("private") , tokens::k_private  );
                 keywords.emplace(T<charT>("public")  , tokens::k_public   );
                 keywords.emplace(T<charT>("object")  , tokens::k_object   );
+
+                // TODO: Add custom keywords
             }
 
             charT ch;
@@ -535,14 +566,14 @@ namespace compiler
             if (keyword != keywords.end())
                 return return_token(keyword->second, id);
 
-            // TODO: Handle custom keywords
-
             return return_token(tokens::identifier, id);
         }
 
         template<typename charT>
         basic_token<charT> basic_tokenizer<charT>::get_operator()
         {
+            // TODO: Handle custom operators
+
             charT ch = next();
             std::basic_string<charT> op{ ch };
 
