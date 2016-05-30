@@ -53,13 +53,13 @@ namespace compiler
         constexpr char T<char, char>(char const& ch)
         {
             return ch;
-        };
+        }
 
         template<>
         constexpr wchar_t T<wchar_t, wchar_t >(wchar_t const& ch)
         {
             return ch;
-        };
+        }
 
 //        template<>
 //        wchar_t T<wchar_t, char>(char const& ch)
@@ -84,13 +84,13 @@ namespace compiler
         std::basic_string<char> T<char, char>(char const* s)
         {
             return s;
-        };
+        }
 
         template<>
         std::basic_string<wchar_t> T<wchar_t, wchar_t>(wchar_t const* s)
         {
             return s;
-        };
+        }
 
         // TODO: T string function for char -> wchar_t
         // TODO: T string function for wchar_t -> char
