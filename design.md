@@ -35,6 +35,7 @@ scheme, etc.
         | block_stmt
         | switch_stmt
         | use_stmt
+        | with_stmt
         ;
     
     declaration_stmt
@@ -137,6 +138,15 @@ scheme, etc.
     use_identifier
         : IDENT
         | IDENT '.' use_identifier
+        ;
+
+    with_stmt
+        : WITH '(' declaration_stmt_list ')' statement
+        ;
+
+    declaration_stmt_list
+        : declaration_stmt
+        | declaration_stmt separator declaration_stmt_list
         ;
         
     expression_list
