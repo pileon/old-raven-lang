@@ -30,7 +30,7 @@ include(CheckIncludeFileCXX)
 check_include_file_cxx(any HAVE_HEADER_ANY)
 check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
 # TODO: Why oh why doesn't the above work with CLion???
-check_include_file_cxx(experimental/any HAVE_HEADER_BOOST_ANY)
+check_include_file_cxx(boost/any.hpp HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
