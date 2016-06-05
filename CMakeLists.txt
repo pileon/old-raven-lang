@@ -3,7 +3,8 @@ project(raven_lang LANGUAGES CXX)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 
 list(APPEND WARNING_OPTIONS -Wall -Wextra -Weffc++)
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
@@ -14,7 +15,8 @@ endif()
 
 list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe -pthread)
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
-    list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
+    list(APPEND COMPILER_OPTIONS -std=c++1z)
+#    list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
 else()
     list(APPEND COMPILER_OPTIONS -std=c++14)
 endif()
@@ -30,7 +32,7 @@ include(CheckIncludeFileCXX)
 check_include_file_cxx(any HAVE_HEADER_ANY)
 check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
 # TODO: Why oh why doesn't the above work with CLion???
-check_include_file_cxx(experimental/any HAVE_HEADER_BOOST_ANY)
+check_include_file_cxx(boost/any HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
