@@ -550,6 +550,7 @@ namespace compiler
                 keywords.emplace(T<charT>("private") , tokens::k_private  );
                 keywords.emplace(T<charT>("public")  , tokens::k_public   );
                 keywords.emplace(T<charT>("object")  , tokens::k_object   );
+                keywords.emplace(T<charT>("with")    , tokens::k_with     );
 
                 // TODO: Add custom keywords
             }

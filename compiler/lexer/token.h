@@ -107,6 +107,7 @@ namespace compiler
         k_private,
         k_public,
         k_object,
+        k_with,
 
         // Other tokens
         newline,        //!< Statement separator, ignored elsewhere
