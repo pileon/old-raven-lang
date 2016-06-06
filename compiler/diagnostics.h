@@ -1,0 +1,8 @@
+//
+// Created by arrow on 2016-06-06.
+//
+
+#ifndef RAVEN_LANG_DIAGNOSTICS_H
+#define RAVEN_LANG_DIAGNOSTICS_H
+
+#endif //RAVEN_LANG_DIAGNOSTICS_H
