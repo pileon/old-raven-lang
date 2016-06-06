@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/compiler/lexer/buffer.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/compiler/lexer/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/compiler/lexer/test_lexer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/compiler/test_diagnostics.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/autoconf.h.in" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
