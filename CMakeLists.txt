@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.4)
 project(raven_lang LANGUAGES CXX)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/output/release")
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/output/release")
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
@@ -34,8 +34,7 @@ include(CheckIncludeFileCXX)
 # Check for new C++14 and C++17 features used by the compiler
 check_include_file_cxx(any HAVE_HEADER_ANY)
 check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
-# TODO: Why oh why doesn't the above work with CLion???
-check_include_file_cxx(boost/any HAVE_HEADER_BOOST_ANY)
+check_include_file_cxx(boost/any.hpp HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
