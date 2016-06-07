@@ -6,5 +6,5 @@
 
 int main()
 {
-    compiler::diagnostics::info<char>() << "foo";
+    compiler::diagnostics::info() << "foo";
 }
