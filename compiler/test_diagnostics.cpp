@@ -6,5 +6,6 @@
 
 int main()
 {
-    compiler::diagnostics::info() << "foo";
+    compiler::token tok("bar", 1, compiler::tokens::error, 0);
+    compiler::diagnostics::info() << tok << "foo";
 }

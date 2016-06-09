@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 
+#include "lexer/token.h"
+
 namespace compiler
 {
     /// \brief Diagnostic message handling
@@ -15,6 +17,12 @@ namespace compiler
         template<typename charT>
         struct basic_outputter
         {
+            basic_outputter& operator<<(basic_token<charT> const& token)
+            {
+                output_ << token.name() << ':' << token.linenumber() << ": ";
+                return *this;
+            }
+
             basic_outputter& operator<<(std::basic_string<charT> const& value)
             {
                 output_ << value;
@@ -94,7 +102,7 @@ namespace compiler
 
             basic_outputter<charT>& pre()
             {
-                return *this << "info:";
+                return *this << "info: ";
                 // TODO: Output "info" plus file-name, line number, column
                 // TODO: How to get file-name, line number or column?
                 return *this;
