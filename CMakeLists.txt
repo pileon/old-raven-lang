@@ -1,4 +1,4 @@
-#cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.4)
 project(raven_lang LANGUAGES CXX)
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
