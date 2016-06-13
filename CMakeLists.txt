@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
 project(raven_lang LANGUAGES CXX)
 
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/output/release")
+
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 
 list(APPEND WARNING_OPTIONS -Wall -Wextra -Weffc++)
@@ -14,6 +18,7 @@ endif()
 
 list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe -pthread)
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
+#    list(APPEND COMPILER_OPTIONS -std=c++1z)
     list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
 else()
     list(APPEND COMPILER_OPTIONS -std=c++14)
@@ -29,7 +34,6 @@ include(CheckIncludeFileCXX)
 # Check for new C++14 and C++17 features used by the compiler
 check_include_file_cxx(any HAVE_HEADER_ANY)
 check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
-# TODO: Why oh why doesn't the above work with CLion???
 check_include_file_cxx(boost/any.hpp HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)

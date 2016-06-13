@@ -6,16 +6,16 @@
 #include <string>
 #if defined(HAVE_HEADER_ANY)
 # include <any>
-#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
-# include <experimental/any>
-// Pulling in symbols into the std namespace like this is not really
-// allowed. It's done for forward compatibility with the C++17 standard
-namespace std
-{
-    using std::experimental::any;
-    using std::experimental::any_cast;
-    using std::experimental::bad_any_cast;
-}
+//#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
+//# include <experimental/any>
+//// Pulling in symbols into the std namespace like this is not really
+//// allowed. It's done for forward compatibility with the C++17 standard
+//namespace std
+//{
+//    using std::experimental::any;
+//    using std::experimental::any_cast;
+//    using std::experimental::bad_any_cast;
+//}
 #elif defined(HAVE_HEADER_BOOST_ANY)
 # include <boost/any.hpp>
 // Pulling in symbols into the std namespace like this is not really
@@ -107,6 +107,7 @@ namespace compiler
         k_private,
         k_public,
         k_object,
+        k_with,
 
         // Other tokens
         newline,        //!< Statement separator, ignored elsewhere
