@@ -1,14 +1,24 @@
 language: c++
 compiler: clang
 os: linux
-sudo: false
+sudo: required
 
-addons:
-    apt:
-      packages:
-        - cmake
-      sources:
-        - kalakris-cmake
+env:
+  global:
+    - LLVM_VERSION=3.8.0
+    - LLVM_ARCHIVE_PATH=$HOME/clang+llvm.tar.xz
+    - CMAKE_VERSION=3.5.2
+    - CMAKE_ARCHIVE_PATH=$HOME/cmake.tar.gz
+
+before_build:
+  - wget https://cmake.org/files/v3.5/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz -O $CMAKE_ARCHIVE_PATH
+  - mkdir $HOME/cmake
+  - tar xf $CMAKE_ARCHIVE_PATH -C $HOME/cmake --strip-components 1
+  - export PATH=$HOME/cmake/bin:$PATH
+  - wget http://llvm.org/releases/$LLVM_VERSION/clang+llvm-$LLVM_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz -O $LLVM_ARCHIVE_PATH
+  - mkdir $HOME/clang+llvm
+  - tar xf $LLVM_ARCHIVE_PATH -C $HOME/clang+llvm --strip-components 1
+  - export PATH=$HOME/clang+llvm/bin:$PATH
 
 script:
   - mkdir build
