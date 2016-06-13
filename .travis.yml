@@ -11,7 +11,7 @@ env:
     - CMAKE_ARCHIVE_PATH=$HOME/cmake.tar.gz
 
 before_install:
-  - wget http://cmake.org/files/v3.5/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz -O $CMAKE_ARCHIVE_PATH
+  - wget --no-check-certificate https://cmake.org/files/v3.5/cmake-$CMAKE_VERSION-Linux-x86_64.tar.gz -O $CMAKE_ARCHIVE_PATH
   - mkdir $HOME/cmake
   - tar xf $CMAKE_ARCHIVE_PATH -C $HOME/cmake --strip-components 1
   - export PATH=$HOME/cmake/bin:$PATH
