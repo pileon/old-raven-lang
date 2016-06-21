@@ -1,4 +1,4 @@
-# raven-lang
+# raven-lang [![Build Status](https://travis-ci.org/pileon/raven-lang.svg?branch=develop)](https://travis-ci.org/pileon/raven-lang)
 
 A generic script language, but made primarily for use in the Raven MUD server.
 
