@@ -1,7 +1,18 @@
 language: c++
 sudo: false
 
+addons:
+  apt:
+    packages:
+      - valgrind
+      - g++-6
+    sources: &sources
+      - ubuntu-toolchain-r-test
+
 matrix:
+  exclude:
+    - env: TRAVIS_EMPTY_JOB_WORKAROUND=true
+
   include:
     - os: linux
       env: LLVM_VERSION=3.8.0 BOOST_VERSION=1.61.0 CMAKE_VERSION=3.5.2 BUILD_TYPE=Debug BUILD_TESTS=1
