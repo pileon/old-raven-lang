@@ -100,12 +100,13 @@ before_script:
   - (mkdir build && cd build && cmake .. -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_BUILD_TYPE=${BUILD_TYPE:-Release} ${CMAKE_OPTIONS})
 
 script:
-  - cd build && cmake --build . --target raven_lang
+  - cd build
+  - cmake --build . --target raven_lang
   - |
     if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cd build; cmake --build . --target test_lexer) || true
+      (cmake --build . --target test_lexer) || true
     fi
   - |
     if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cd build; cmake --build . --target test_diagnostics) || true
+      (cmake --build . --target test_diagnostics) || true
     fi
