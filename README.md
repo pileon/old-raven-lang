@@ -8,7 +8,8 @@ A generic script language, but made primarily for use in the Raven MUD server.
 * Everything is first-class
 * Dynamic typing
 * Syntax similar to C and C++
-* Extensible, possible to add syntactic structures
+* Extendable, possible to add syntactic structures
+* Largely asynchronous and event based
 
 ## Examples
 
@@ -23,10 +24,10 @@ A generic script language, but made primarily for use in the Raven MUD server.
     {
         if (n == 0 || n == 1)
             return n;
-            
+
         return fib(n - 1) + fib(n - 2);
     }
-    
+
     # Print the first ten Fibonacci numbers
     for (i : 1..10)
         print("Fibbonacci for %{i} is %{fib(i)}\n");
@@ -44,7 +45,7 @@ expression in literal string constants.
             print("%{name} says "%{make_sound()}.\n")
         }
     }
-    
+
     var cat = class(animal)
     {
         var make_sound = function()
@@ -52,7 +53,7 @@ expression in literal string constants.
             return "meow"
         }
     }
-    
+
     var dog = class(animal)
     {
         var make_sound = function()
@@ -60,17 +61,17 @@ expression in literal string constants.
             return "woof"
         }
     }
-    
+
     var spot = object(dog)
     {
         name = "Spot"
     }
-    
+
     var fluffy = object(cat)
     {
         name = "Fluffy"
     }
-    
+
     for (var a : [fluffy, spot])
         a.speak()
 
