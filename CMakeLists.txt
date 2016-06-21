@@ -31,7 +31,7 @@ add_compile_options(${COMPILER_OPTIONS})
 string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${COMPILER_OPTIONS}")
 
 find_package(Boost
-        REQUIRED COMPONENTS program_options system)
+        COMPONENTS program_options system)
 
 include(CheckIncludeFileCXX)
 

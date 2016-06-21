@@ -27,12 +27,17 @@ install:
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 
   # Default versions
-  - if [[ "${LLVM_VERSION}" == "default" ]]; then LLVM_VERSION=3.8.0; fi
-  - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.61.0; fi
-  - if [[ "${CMAKE_VERSION}" == "default" ]]; then CMAKE_VERSION=3.5.2; fi
+  - if [[ "${LLVM_VERSION:-default}" == "default" ]]; then LLVM_VERSION=3.8.0; fi
+  - if [[ "${BOOST_VERSION:-default}" == "default" ]]; then BOOST_VERSION=1.61.0; fi
+  - if [[ "${CMAKE_VERSION:-default}" == "default" ]]; then CMAKE_VERSION=3.5.2; fi
 
   - if [[ "${BUILD_TYPE}" == "" ]]; then BUILD_TYPE=Release; fi
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+
+  # Boost headers
+  - BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//./_}.tar.gz"
+  - if [[ "${BOOST_URL}" != "" ]]; then mkdir boost && travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C boost; fi
+  - if [[ -d ${DEPS_DIR}/boost ]]; then CMAKE_OPTIONS+=" -DBOOST_ROOT=${DEPS_DIR}/boost"; fi
 
   # Install CMake
   - |
