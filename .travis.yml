@@ -22,6 +22,9 @@ matrix:
 #      env: LLVM_VERSION=3.8.0 BOOST_VERSION=1.61.0 CMAKE_VERSION=3.5.2 BUILD_TYPE=Release
 #      compiler: clang
 
+before_install:
+  - git submodule update --init --recursive
+
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
