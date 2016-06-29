@@ -186,7 +186,11 @@ namespace compiler
             return linenumber_;
         }
 
+#if defined(TESTING)
+    public:
+#else
     private:
+#endif
         explicit basic_token(std::string const& name, unsigned linenumber,
                              tokens const token, std::any const& data)
             : name_{name}, linenumber_{linenumber},
