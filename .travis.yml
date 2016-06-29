@@ -22,6 +22,9 @@ matrix:
 #      env: LLVM_VERSION=3.8.0 BOOST_VERSION=1.61.0 CMAKE_VERSION=3.5.2 BUILD_TYPE=Release
 #      compiler: clang
 
+before_install:
+  - git submodule update --init --recursive
+
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
@@ -33,6 +36,9 @@ install:
 
   - if [[ "${BUILD_TYPE}" == "" ]]; then BUILD_TYPE=Release; fi
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+
+  # Build tests?
+  - if [[ "${BUILD_TESTS:-0}" != "0" ]]; then CMAKE_OPTIONS+=" -DBUILD_TESTS=YES"; fi
 
   # Boost headers
   - BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//./_}.tar.gz"
@@ -104,9 +110,5 @@ script:
   - cmake --build . --target raven_lang
   - |
     if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cmake --build . --target test_lexer) || true
-    fi
-  - |
-    if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cmake --build . --target test_diagnostics) || true
+      cmake --build . --target run_tests
     fi
