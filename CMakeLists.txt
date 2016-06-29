@@ -69,6 +69,8 @@ set(SOURCE_FILES main.cpp)
 add_executable(raven_lang ${SOURCE_FILES})
 
 add_subdirectory(compiler)
-add_subdirectory(tests)
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
 
 configure_file(autoconf.h.in ${CMAKE_SOURCE_DIR}/autoconf.h)

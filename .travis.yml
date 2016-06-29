@@ -34,6 +34,9 @@ install:
   - if [[ "${BUILD_TYPE}" == "" ]]; then BUILD_TYPE=Release; fi
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
 
+  # Build tests?
+  - if [[ "${BUILD_TESTS:-0}" != "0" ]]; then CMAKE_OPTIONS+=" -DBUILD_TESTS=YES"; fi
+
   # Boost headers
   - BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//./_}.tar.gz"
   - if [[ "${BOOST_URL}" != "" ]]; then mkdir boost && travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C boost; fi
@@ -104,9 +107,5 @@ script:
   - cmake --build . --target raven_lang
   - |
     if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cmake --build . --target test_lexer) || true
-    fi
-  - |
-    if [[ "${BUILD_TESTS:-0}" != "0" ]]; then
-      (cmake --build . --target test_diagnostics) || true
+      cmake --build . --target run_tests
     fi
