@@ -20,25 +20,43 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     list(APPEND WARNING_OPTIONS -pedantic)
 endif()
 
-list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe -pthread)
+# TODO: Check if the compiler supports the -pipe flag
+list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe)
+
+# TODO: See if the compiler supports the -std=c++xx flag
+# TODO: See if the compiler supports the -stdlib=libc++ flag
 if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
 #    list(APPEND COMPILER_OPTIONS -std=c++1z)
     list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
 else()
     list(APPEND COMPILER_OPTIONS -std=c++14)
 endif()
+
+find_package (Threads)
+if(THREADS_HAVE_PTHREAD_ARG)
+    list(APPEND COMPILER_OPTIONS -pthread)
+endif()
+
 add_compile_options(${COMPILER_OPTIONS})
 string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${COMPILER_OPTIONS}")
 
 find_package(Boost
-        COMPONENTS program_options system)
+        COMPONENTS system)
 
 include(CheckIncludeFileCXX)
+
+if(Boost_FOUND)
+    check_include_file_cxx(boost/any.hpp HAVE_HEADER_BOOST_ANY)
+
+    check_include_file_cxx(boost/iostreams/stream.hpp HAVE_HEADER_BOOST_IOSTREAMS_STREAM_HPP)
+    if(NOT HAVE_HEADER_BOOST_IOSTREAMS_STREAM_HPP)
+        message(FATAL "Need <boost/iostreams/stream.hpp>")
+    endif()
+endif()
 
 # Check for new C++14 and C++17 features used by the compiler
 check_include_file_cxx(any HAVE_HEADER_ANY)
 check_include_file_cxx(experimental/any HAVE_HEADER_EXPERIMENTAL_ANY)
-check_include_file_cxx(boost/any.hpp HAVE_HEADER_BOOST_ANY)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -70,6 +88,7 @@ add_executable(raven_lang ${SOURCE_FILES})
 
 add_subdirectory(compiler)
 if(BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
