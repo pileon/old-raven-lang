@@ -1,40 +1,75 @@
 cmake_minimum_required(VERSION 3.4)
 project(raven_lang LANGUAGES CXX C)
 
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/output/release")
-
-# TODO: Check for libc++
 # TODO: Check if libc++abi is needed to link with explicitly
-# TODO: Check for standard version flag to use
 
-#set(CMAKE_C_COMPILER clang)
-#set(CMAKE_CXX_COMPILER clang++)
-#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+include(CheckCXXCompilerFlag)
 
-list(APPEND WARNING_OPTIONS -Wall -Wextra -Weffc++)
-if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
-    list(APPEND WARNING_OPTIONS -Wpedantic)
-elseif(CMAKE_COMPILER_IS_GNUCXX)
-    list(APPEND WARNING_OPTIONS -pedantic)
+# Check for supported warning flags
+check_cxx_compiler_flag(-Wall HAVE_FLAG_WALL)
+if(HAVE_FLAG_WALL)
+    list(APPEND COMPILER_OPTIONS -Wall)
 endif()
-
-# TODO: Check if the compiler supports the -pipe flag
-list(APPEND COMPILER_OPTIONS ${WARNING_OPTIONS} -pipe)
-
-# TODO: See if the compiler supports the -std=c++xx flag
-# TODO: See if the compiler supports the -stdlib=libc++ flag
-if(${CMAKE_CXX_COMPILER} MATCHES "clang\\+\\+")
-#    list(APPEND COMPILER_OPTIONS -std=c++1z)
-    list(APPEND COMPILER_OPTIONS -std=c++1z -stdlib=libc++)
+check_cxx_compiler_flag(-Wextra HAVE_FLAG_WEXTRA)
+if(HAVE_FLAG_WEXTRA)
+    list(APPEND COMPILER_OPTIONS -Wextra)
+endif()
+check_cxx_compiler_flag(-Weffc++ HAVE_FLAG_WEFFCXX)
+if(HAVE_FLAG_WEFFCXX)
+    list(APPEND COMPILER_OPTIONS -Weffc++)
+endif()
+check_cxx_compiler_flag(-Wpedantic HAVE_FLAG_WPEDANTIC)
+if(HAVE_FLAG_WPEDANTIC)
+    list(APPEND COMPILER_OPTIONS -Wpedantic)
 else()
-    list(APPEND COMPILER_OPTIONS -std=c++14)
+    check_cxx_compiler_flag(-pedantic HAVE_FLAG_PEDANTIC)
+    if(HAVE_FLAG_PEDANTIC)
+        list(APPEND COMPILER_OPTIONS -pedantic)
+    endif()
+endif()
+check_cxx_compiler_flag(-Wimplicit-fallthrough HAVE_FLAG_WIMPLICIT_FALLTHROUGH)
+if(HAVE_FLAG_WIMPLICIT_FALLTHROUGH)
+    list(APPEND COMPILER_OPTIONS -Wimplicit-fallthrough)
 endif()
 
-find_package (Threads)
-if(THREADS_HAVE_PTHREAD_ARG)
-    list(APPEND COMPILER_OPTIONS -pthread)
+# Check for standard to use
+check_cxx_compiler_flag(-std=c++17 HAVE_FLAG_STD_CXX17)
+if(HAVE_FLAG_STD_CXX17)
+    list(APPEND COMPILER_OPTIONS -std=c++17)
+else()
+    check_cxx_compiler_flag(-std=c++1z HAVE_FLAG_STD_CXX1Z)
+    if(HAVE_FLAG_STD_CXX1Z)
+        list(APPEND COMPILER_OPTIONS -std=c++1z)
+    else()
+        check_cxx_compiler_flag(-std=c++14 HAVE_FLAG_STD_CXX14)
+        if(HAVE_FLAG_STD_CXX14)
+            list(APPEND COMPILER_OPTIONS -std=c++14)
+        else()
+            message(FATAL " Need a compiler capable of at least C++14")
+        endif()
+    endif()
+endif()
+
+check_cxx_compiler_flag(-stdlib=libc++ HAVE_FLAG_STDLIB_LIBCXX)
+if(HAVE_FLAG_STDLIB_LIBCXX)
+    list(APPEND COMPILER_OPTIONS -stdlib=libc++)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+endif()
+
+# Check for other miscelaneous flags
+check_cxx_compiler_flag(-pipe HAVE_FLAG_PIPE)
+if(HAVE_FLAG_PIPE)
+    list(APPEND COMPILER_OPTIONS -pipe)
+endif()
+
+find_package(Threads)
+if(Threads_FOUND)
+    check_cxx_compiler_flag(-pthread HAVE_FLAG_PTHREAD)
+    if(HAVE_FLAG_PTHREAD)
+        list(APPEND COMPILER_OPTIONS -pthread)
+    endif()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+    # TODO: Add the pthread linker library?
 endif()
 
 add_compile_options(${COMPILER_OPTIONS})
