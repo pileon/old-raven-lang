@@ -51,6 +51,23 @@ else()
 endif()
 
 check_cxx_compiler_flag(-stdlib=libc++ HAVE_FLAG_STDLIB_LIBCXX)
+
+# Check if we can build with `stdlib=libc++` without linking with `-lc++abi`
+if(HAVE_FLAG_STDLIB_LIBCXX)
+    # Check that libc++ actually exists
+    set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+    set(CMAKE_REQUIRED_FLAGS "-stdlib=libc++")
+    CHECK_CXX_SOURCE_COMPILES(
+            "#include <iostream>
+            int main()
+            {
+                std::cout << 'x';
+            }"
+            STDLIBCXX_WITHOUT_LIBCXXABI
+            FAIL_REGEX "libc\\\\+\\\\+abi\\\\.so")
+    set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
+endif()
+
 if(HAVE_FLAG_STDLIB_LIBCXX)
     list(APPEND COMPILER_OPTIONS -stdlib=libc++)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
@@ -120,6 +137,9 @@ endif()
 
 set(SOURCE_FILES main.cpp)
 add_executable(raven_lang ${SOURCE_FILES})
+if (NOT STDLIBCXX_WITHOUT_LIBCXXABI)
+    target_link_libraries(raven_lang c++abi)
+endif()
 
 add_subdirectory(compiler)
 if(BUILD_TESTS)
