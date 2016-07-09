@@ -1,6 +1,9 @@
-set(SOURCE_FILES buffer.cpp)
-add_executable(lexer_test ${SOURCE_FILES})
+set(LEXER_SOURCE_FILES buffer.cpp)
+add_executable(lexer_test ${LEXER_SOURCE_FILES})
 target_link_libraries(lexer_test gtest gtest_main)
 if (NOT STDLIBCXX_WITHOUT_LIBCXXABI)
     target_link_libraries(lexer_test c++abi)
 endif()
+
+add_test(NAME lexer_test
+        COMMAND lexer_test)
