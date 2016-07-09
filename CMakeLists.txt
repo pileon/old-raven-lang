@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(raven_lang LANGUAGES CXX C)
 
-# TODO: Check if libc++abi is needed to link with explicitly
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 include(CheckCXXCompilerFlag)
 
