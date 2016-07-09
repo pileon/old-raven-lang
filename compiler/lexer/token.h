@@ -6,18 +6,22 @@
 #include <string>
 #if defined(HAVE_HEADER_ANY)
 # include <any>
-//#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
-//# include <experimental/any>
-//// Pulling in symbols into the std namespace like this is not really
-//// allowed. It's done for forward compatibility with the C++17 standard
-//namespace std
-//{
-//    using std::experimental::any;
-//    using std::experimental::any_cast;
-//    using std::experimental::bad_any_cast;
-//}
+#elif defined(HAVE_HEADER_EXPERIMENTAL_ANY)
+# include <experimental/any>
+# ifndef ANY_IN_STD
+// Pulling in symbols into the std namespace like this is not really
+// allowed. It's done for forward compatibility with the C++17 standard
+namespace std
+{
+    using std::experimental::any;
+    using std::experimental::any_cast;
+    using std::experimental::bad_any_cast;
+}
+#  define ANY_IN_STD
+# endif
 #elif defined(HAVE_HEADER_BOOST_ANY)
 # include <boost/any.hpp>
+# ifndef ANY_IN_STD
 // Pulling in symbols into the std namespace like this is not really
 // allowed. It's done for forward compatibility with the C++17 standard
 namespace std
@@ -26,6 +30,8 @@ namespace std
     using boost::any_cast;
     using boost::bad_any_cast;
 }
+#  define ANY_IN_STD
+# endif
 #else
 # error No any header available
 #endif

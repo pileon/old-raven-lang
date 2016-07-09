@@ -4,8 +4,12 @@ project(raven_lang LANGUAGES CXX)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/output/debug")
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/output/release")
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+# TODO: Check for libc++
+# TODO: Check if libc++abi is needed to link with explicitly
+# TODO: Check for standard version flag to use
+
+#set(CMAKE_C_COMPILER clang)
+#set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 
@@ -27,7 +31,7 @@ add_compile_options(${COMPILER_OPTIONS})
 string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${COMPILER_OPTIONS}")
 
 find_package(Boost
-        REQUIRED COMPONENTS program_options system)
+        COMPONENTS program_options system)
 
 include(CheckIncludeFileCXX)
 
