@@ -1,4 +1,5 @@
 autoconf.h
+doc/html/
 
 ### CMake template
 CMakeCache.txt
